@@ -1,0 +1,36 @@
+# Python - Arkivu sira ne'ebé kompila ona
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambiente Virtual (IMPORTANTE TEBES)
+# Ami la dudu pasta ne'e tanba nia boot
+# no nia konteúdu sira diferente entre Linux Mint no Ubuntu VPS
+venv/
+env/
+ENV/
+.venv/
+
+# Baze-dadus Lokál (SQLite)
+# Baze-dadus iha laptop labele haruka ba servidór produsaun sira.
+db.sqlite3
+
+# Arkivu Segredu (Variavel sira Ambiente nian)
+# Kontein senha baze-dadus nian, SECRET_KEY, no xave API nian
+.env
+
+# Media & Static Folders (Opsional)
+# Normalmente arkivu sira ne'ebé maka utilizadór hatama jere ketak iha servidór
+/media/
+/static/
+
+# Log
+*.log
+
+# Pasta ba editór de'it (Kódigu VS / PyCharm)
+.vscode/
+.idea/
+
+# Sistema operasaun
+.DS_Store
+Thumbs.db
