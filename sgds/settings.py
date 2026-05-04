@@ -28,7 +28,14 @@ INSTALLED_APPS = [
     'django_summernote',
     'main',
     'membro',
+    'notif',
+    'npp',
+    'report',
+    'user',
+    'votes',
+    'custom',
     'notif'
+
 ]
 
 MIDDLEWARE = [
