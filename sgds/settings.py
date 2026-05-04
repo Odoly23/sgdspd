@@ -20,9 +20,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+    'django.contrib.humanize',
     'crispy_forms',
-    'crispy_bootstrap4',
+    'crispy_bootstrap4',  
+    'django_cleanup',
+    'rest_framework',
+    'django_summernote',
+    'main',
+    'membro',
+    'notif'
 ]
 
 MIDDLEWARE = [
