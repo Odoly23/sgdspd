@@ -1,0 +1,39 @@
+{% load static %}
+<div class="topbar">
+  <div class="container">
+    <div class="tb-left">
+      <span><i class="fa-solid fa-phone fa-xs mr-1"></i> +670 777 12345</span>
+      <span class="d-none d-sm-inline"><i class="fa-solid fa-envelope fa-xs mr-1"></i> pd@email.tl</span>
+    </div>
+    <div class="tb-right">
+      <span><i class="fa-solid fa-location-dot fa-xs mr-1"></i> Dili</span>
+      <strong style="color:#fff;">PD-PADA</strong>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="main-navbar">
+  <div class="container">
+
+    <a class="brand" href="#">
+      <img src="{% static 'Images/images.png' %}" alt="Logo PD">
+      <span>Partido Democrático</span>
+    </a>
+    <!-- Desktop -->
+    {% if user.is_authenticated %}
+        {% if user.groups.all.0.name == 'postu' %}
+            {% include 'main/nav/Navs/admin.html' %}
+        {% elif user.groups.all.0.name == 'suku' %}
+            {% include 'main/nav/Navs/s_staff.html' %}
+        {% elif user.groups.all.0.name == 'ald' %}
+            {% include 'main/nav/Navs/ald.html' %}
+        {% elif user.groups.all.0.name == 'staff' %}
+            {% include 'main/nav/Navs/DG.html' %}
+        {% else %}
+        {% endif %}
+    {% endif %}
+  </div>
+</nav>
+
+<!-- SIDEBAR — muncul di bawah navbar, mobile only -->

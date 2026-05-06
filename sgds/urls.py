@@ -15,15 +15,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
+from django.conf.urls import handler404, handler500
+from main.views import logout_view, loginPage
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/', loginPage, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('', include('main.urls')),
+    path('Membru/', include('membro.urls'))
 ]
-
-
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+admin.site.site_header = "SISTEMA GESTAUN DADOS PD-PADA - SUPER USER"
+admin.site.site_title = "SISTEMA GESTAUN DADOS PD-PADA - SUPER USER"
+admin.site.index_title = "Portal Super User"
+
+handler404 = 'main.views.error_404'
+handler500 = 'main.views.error_500'

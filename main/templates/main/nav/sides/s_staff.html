@@ -1,0 +1,25 @@
+       <ul class="nav-links">
+   <li><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="{% url 'g-dash' %}"><i class="fa-solid fa-users"></i> Membru</a></li>
+      <li><a href="#"><i class="fa-solid fa-cube"></i> Strutura</a></li>
+      <li><a href="#"><i class="fa-solid fa-chart-bar"></i> Relatoriu</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false"
+           style="display:flex;align-items:center;gap:8px;">
+          <div class="av"><i class="fa-solid fa-user fa-xs"></i></div>
+          <span>Conta</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="#"><i class="fa-solid fa-circle-user text-primary"></i> Profile</a>
+          <a class="dropdown-item" href="#"><i class="fa-solid fa-gear text-secondary"></i> Minha Conta</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Mobile hamburger -->
+    <button class="btn-ham" id="menuToggle" aria-label="Buka menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>

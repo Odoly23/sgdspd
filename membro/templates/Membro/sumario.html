@@ -1,0 +1,145 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="card shadow-sm border-0 rounded-4 mb-3">
+    <div class="card-body text-center">
+
+      {% if group == 'staff' or group == 'admin' %}
+        <a class="btn btn-sm btn-info mb-2" href="">
+          Rejistu Membro <i class="fa fa-plus-square"></i>
+        </a>
+      {% endif %}
+
+      <a class="btn btn-sm btn-success mb-2" href="">
+        Lista Geral <i class="fa fa-list"></i>
+      </a>
+
+      <a class="btn btn-sm btn-warning mb-2" href="">
+        Sumario Geral <i class="fa fa-table"></i>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ================= TITLE ================= -->
+<div class="card shadow-sm border-0 rounded-4 mb-3">
+  <div class="card-body text-center">
+    <h5 class="mb-0 font-weight-bold">
+      SUMARIO TOTAL DE DADOS COMPAINEIROS 
+      <span class="text-primary">{{ nama_lokasi|upper }}</span>
+    </h5>
+  </div>
+</div>
+
+  <!-- ================= TABLE ================= -->
+  <div class="card shadow-sm border-0 rounded-4 mb-3">
+    <div class="card-body p-2 p-md-3">
+      <div class="table-responsive">
+
+        <table class="table table-striped table-bordered table-hover table-sm" id="example2">
+          <thead class="text-center">
+            <tr>
+              <th rowspan="2" class="align-middle">No</th>
+              <th rowspan="2" class="align-middle">Suku</th>
+              <th colspan="2">Membro</th>
+              <th rowspan="2">Total</th>
+            </tr>
+            <tr>
+              <th>Mane</th>
+              <th>Feto</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for obj in objects1 %}
+            <tr class="text-center">
+              <td>{{ forloop.counter }}</td>
+              <td class="text-left">{{ obj.nama }}</td>
+
+              <td>
+                <a href="">
+                  {{ obj.male }}
+                </a>
+              </td>
+
+              <td>
+                <a href="">
+                  {{ obj.female }}
+                </a>
+              </td>
+
+              <td>
+                <strong>
+                  <a href="">
+                    {{ obj.total }}
+                  </a>
+                </strong>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CHARTS ================= -->
+  <div class="row mb-3">
+
+    <div class="col-md-5 mb-3">
+      <div class="card border-0 rounded-4 shadow-sm p-3 h-100">
+        <p class="text-uppercase text-muted font-weight-bold small">
+          Total Dados Membro Baseado Sexu
+        </p>
+        <canvas id="cSexu"></canvas>
+      </div>
+    </div>
+
+    <div class="col-md-7 mb-3">
+      <div class="card border-0 rounded-4 shadow-sm p-3 h-100">
+        <p class="text-uppercase text-muted font-weight-bold small">
+          Total Dados Membro Baseado Estado Civil
+        </p>
+        <canvas id="cCivil"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= EXTRA CHART ================= -->
+  <div class="row">
+
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted text-uppercase small">Baseado Tinan</h6>
+          <canvas id="cUmur"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted text-uppercase small">Tinan Moris</h6>
+          <canvas id="cTinan"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block skrip %}
+<script src="{% static 'js/chart.js' %}"></script>
+
+<script>
+
+</script>
+{% endblock %}

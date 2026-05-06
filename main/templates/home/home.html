@@ -1,0 +1,50 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-3 custom-container" style="max-width: 1500px;">
+  <div class="row justify-content-center">
+    <div class="col-lg-12">
+      <div class="card border-0 text-center">
+
+        <!-- TOP TITLE -->
+        <h3 class="text-uppercase mb-2">
+          Partido Democrático
+        </h3>
+
+        <hr class="my-3">
+
+        <!-- MAIN TITLE -->
+        <h6 class="fw-bold text-uppercase text-dark mb-3" style="line-height:1.4;">
+          SISTEMA GESTAUN DADUS COMPAINEIROS
+            <hr style="width:120px; border-top:2px solid #2f3e9e; margin:auto;">
+          POSTU ADMINISTRATIVU DOM-ALEIXO
+        </h6>
+
+        <hr class="my-3">
+
+        <!-- LOGO -->
+        <div class="my-4">
+          <img src="{% static 'Images/images.png' %}"
+               class="img-fluid"
+               style="max-height: 160px;">
+        </div>
+
+        <hr class="my-3">
+
+        <!-- WELCOME BUTTON -->
+        <h4 class="fw-bold mb-0">
+          <a href=""
+             target="_blank">
+            BEMVINDO
+          </a>
+        </h4>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

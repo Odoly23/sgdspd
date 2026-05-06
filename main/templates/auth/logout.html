@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logout - Sistema</title>
+
+<link rel="stylesheet" href="{% static 'css/bootstrap/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'webfonts/css/all.min.css' %}">
+
+<style>
+body {
+    background: #f5f6fa;
+}
+
+.logout-wrapper {
+    min-height: 100vh;
+}
+</style>
+
+</head>
+<body>
+
+<div class="logout-wrapper d-flex align-items-center justify-content-center">
+
+    <div class="card border-0 shadow-sm text-center p-4" style="width:380px; border-radius:12px;">
+
+        <div class="card-body">
+
+            <!-- MESSAGES -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show small">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- ICON -->
+            <div class="mb-3">
+                <i class="fa fa-check-circle text-success" style="font-size:60px;"></i>
+            </div>
+
+            <!-- TITLE -->
+            <h6 class="font-weight-bold mb-2">Logout Success</h6>
+
+            <small class="text-muted d-block mb-3">
+                Ita sai ona husi sistema ho seguru
+            </small>
+
+            <hr>
+
+            <!-- BUTTON LOGIN -->
+            <a class="btn btn-success btn-block" href="{% url 'login' %}">
+                Log In Fila-Fali <i class="fa fa-arrow-right ml-1"></i>
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

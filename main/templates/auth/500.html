@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>500 - Server Error</title>
+
+<link rel="stylesheet" href="{% static 'css/bootstrap/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'webfonts/css/all.min.css' %}">
+
+<style>
+body {
+    background: #f5f6fa;
+}
+
+.error-wrapper {
+    min-height: 100vh;
+}
+
+.error-card {
+    width: 420px;
+    border-radius: 12px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="error-wrapper d-flex align-items-center justify-content-center">
+
+    <div class="card error-card border-0 shadow-sm text-center p-4">
+
+        <div class="card-body">
+
+            <i class="fa fa-server text-danger mb-3" style="font-size:60px;"></i>
+
+            <h2 class="font-weight-bold">500</h2>
+            <h6 class="mb-2">Server Error</h6>
+
+            <small class="text-muted d-block mb-3">
+                Sistema hasoru problema internal, favor kontaktu admin
+            </small>
+
+            <hr>
+
+            <a href="{% url 'home' %}" class="btn btn-danger btn-block">
+                <i class="fa fa-home mr-1"></i> Kembali Home
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

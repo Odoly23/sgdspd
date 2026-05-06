@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% if title %}
+  <title>SGDP-PD-{{title}}</title>
+{% else %}
+  <title>Partido Democrático</title>
+{% endif %}
+<title></title>
+<link rel="icon" href="{% static 'Images/images.png' %}">
+<link rel="stylesheet" href="{% static 'css/bootstrap/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/bootstrap/css/all.min.css' %}">
+<link rel="stylesheet" href="{% static 'webfonts/css/all.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<!-- TOPBAR -->
+{% include 'main/nav/navbar.html' %}
+{% include 'main/nav/side.html' %}
+<!-- CONTENT -->
+<div class="page-wrapper">
+  <div class="container">
+
+    <!-- BREADCRUMB AUTO -->
+    <div class="breadcrumb-holder mb-2">
+      <ul class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{% url 'home' %}">
+            <i class="fa-solid fa-house fa-xs mr-1"></i> Home
+          </a>
+        </li>
+
+        {% if link_antes %}
+          {% for i in link_antes %}
+            <li class="breadcrumb-item">
+              <a href="{% if i.link_param %}
+                          {% url i.link_name i.link_param %}
+                       {% else %}
+                          {% url i.link_name %}
+                       {% endif %}">
+                {{ i.link_text }}
+              </a>
+            </li>
+          {% endfor %}
+        {% endif %}
+
+        <li class="breadcrumb-item active">{{ title }}</li>
+      </ul>
+    </div>
+
+    <!-- MESSAGES AUTO -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} m-2 p-2">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- CONTENT -->
+    <div class="main-content">
+      {% block content %}{% endblock %}
+    </div>
+
+  </div>
+</div>
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    Copyright &copy; 2026  &mdash; POSTU DOM ALEIXO &nbsp;|&nbsp;
+    Developed &amp; Maintained by : <strong>Sec-IT-PADA</strong>.
+  </div>
+</footer>
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'css/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script>
+$(function(){
+
+function openSB() {
+  $("#sidebar").addClass("active");
+  $("#overlay").addClass("active");
+  $("body").addClass("sb-open");
+}
+
+function closeSB() {
+  $("#sidebar").removeClass("active");
+  $("#overlay").removeClass("active");
+  $("body").removeClass("sb-open");
+}
+
+  $("#menuToggle").on("click", function(){
+    $("#sidebar").hasClass("active") ? closeSB() : openSB();
+  });
+
+  $("#overlay").on("click", closeSB);
+
+  $(".sb-body li a").on("click", function(){
+    $(".sb-body li").removeClass("sb-on");
+    $(this).closest("li").addClass("sb-on");
+    closeSB();
+  });
+
+  $(window).on("resize", function(){
+    if(window.innerWidth >= 992) closeSB();
+  });
+
+});
+</script>
+</body>
+</html>
