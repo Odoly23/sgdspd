@@ -31,7 +31,7 @@ def dash_mem(request):
     if user_mem:
         loc = LocationTL.objects.select_related('village', 'aldeia').filter(membro=user_mem).first()
     data = []
-    if group in ['postu', 'admin', 'staff']:
+    if group == "postu" or group == "admin" or group == "staff":
         data = list(Village.objects.all())
         nama_lokasi = "POSTO DOM-ALEIXO"
     elif group == 'suku':
