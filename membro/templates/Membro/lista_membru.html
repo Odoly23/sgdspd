@@ -1,0 +1,78 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="card shadow-sm border-0 rounded-4">
+
+        <div class="card-header bg-white">
+            <h5 class="mb-0">
+                {{ title }}
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-striped table-hover table-sm" width="100%">
+
+                    <thead class="text-center">
+
+                        <tr>
+                            <th>No</th>
+                            <th>Naran</th>
+                            <th>Sexu</th>
+                            <th>Data Moris</th>
+                            <th>Telefone</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for m in membros %}
+
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>{{ m.name }}</td>
+
+                            <td>{{ m.sex }}</td>
+
+                            <td>{{ m.dob }}</td>
+
+                            <td>
+                                {% if m.contactinfo %}
+                                    {{ m.contactinfo.phone }}
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                Dadus la iha
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

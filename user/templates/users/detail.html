@@ -1,0 +1,367 @@
+{% extends "main/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="ud-wrap">
+  <!-- ── Back link ── -->
+  <a href="{% url 'membro_user_list' %}" class="ud-back">
+    <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M8.5 3L4.5 7.5l4 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Fila ba lista
+  </a>
+
+  <!-- ── Profile card ── -->
+  <div class="ud-card ud-profile">
+    <div class="ud-avatar-lg">{{ membro.name|first|upper }}</div>
+    <div class="ud-profile-info">
+      <h1 class="ud-profile-name">{{ membro.name }}</h1>
+      <div class="ud-profile-meta">
+        {% with pos=membro.membroposition %}
+          {% if pos.estrutura %}
+          <span class="ud-chip ud-chip--{{ pos.estrutura.code|lower }}">{{ pos.estrutura.code }}</span>
+          {% endif %}
+          {% if pos.position %}
+          <span class="ud-chip ud-chip--neutral">{{ pos.position }}</span>
+          {% endif %}
+        {% endwith %}
+      </div>
+    </div>
+    <div class="ud-status-badge">
+      <span class="ud-dot ud-dot--green"></span>
+      Ativu
+    </div>
+  </div>
+
+  <!-- ── Account info ── -->
+  <div class="ud-section-title">Informasaun Konta</div>
+
+  <div class="ud-card ud-info-grid">
+    <div class="ud-info-item">
+      <div class="ud-info-label">Username</div>
+      <div class="ud-info-value" id="disp-username">{{ user.username }}</div>
+    </div>
+    <div class="ud-info-item">
+      <div class="ud-info-label">Naran Kompletu</div>
+      <div class="ud-info-value">{{ user.get_full_name|default:"—" }}</div>
+    </div>
+    <div class="ud-info-item">
+      <div class="ud-info-label">Grupu</div>
+      <div class="ud-info-value">
+        {% for g in user.groups.all %}
+        <span class="ud-chip ud-chip--blue">{{ g.name }}</span>
+        {% empty %}—{% endfor %}
+      </div>
+    </div>
+    <div class="ud-info-item">
+      <div class="ud-info-label">Últimu login</div>
+      <div class="ud-info-value">{{ user.last_login|date:"d M Y, H:i"|default:"Nunka login" }}</div>
+    </div>
+  </div>
+
+  <!-- ── Action cards ── -->
+  <div class="ud-section-title">Aksaun</div>
+
+  <div class="ud-actions-row">
+
+    <!-- Card: Ganti Username -->
+    <div class="ud-card ud-action-card">
+      <div class="ud-action-icon ud-action-icon--blue">
+        <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><path d="M1 13l3.5-1L12 5a1.41 1.41 0 000-2L11 2a1.41 1.41 0 00-2 0L1.5 9.5 1 13Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="ud-action-content">
+        <div class="ud-action-title">Muda Username</div>
+        <div class="ud-action-desc">Muda username konta ne'e</div>
+      </div>
+      <button class="ud-btn ud-btn--outline" onclick="openUsernameModal()">Muda</button>
+    </div>
+
+    <!-- Card: Reset Password -->
+    <div class="ud-card ud-action-card">
+      <div class="ud-action-icon ud-action-icon--amber">
+        <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><rect x="2" y="7" width="11" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a2.5 2.5 0 015 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+      <div class="ud-action-content">
+        <div class="ud-action-title">Reset Password</div>
+        <div class="ud-action-desc">Set password foun ba uzuáriu ne'e</div>
+      </div>
+      <button class="ud-btn ud-btn--outline" onclick="openPasswordModal()">Reset</button>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     MODAL — Ganti Username
+═══════════════════════════════════════ -->
+<div id="ud-modal-username" class="ud-modal-overlay" aria-hidden="true">
+  <div class="ud-modal">
+    <div class="ud-modal-head">
+      <h2 class="ud-modal-title">Muda Username</h2>
+      <button class="ud-modal-close" onclick="closeModal('ud-modal-username')">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 2l11 11M13 2L2 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="ud-modal-body">
+      <div class="ud-field">
+        <label class="ud-label">Username foun</label>
+        <input id="inp-username" type="text" class="ud-input" value="{{ user.username }}" placeholder="username baru">
+      </div>
+      <div id="err-username" class="ud-error" hidden></div>
+      <div class="ud-modal-foot">
+        <button class="ud-btn ud-btn--ghost" onclick="closeModal('ud-modal-username')">Kansela</button>
+        <button class="ud-btn ud-btn--primary" id="btn-save-username" onclick="saveUsername()">
+          <span>Salva</span>
+          <span class="ud-spinner" id="sp-username" hidden></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MODAL — Reset Password
+═══════════════════════════════════════ -->
+<div id="ud-modal-password" class="ud-modal-overlay" aria-hidden="true">
+  <div class="ud-modal">
+    <div class="ud-modal-head">
+      <h2 class="ud-modal-title">Reset Password</h2>
+      <button class="ud-modal-close" onclick="closeModal('ud-modal-password')">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 2l11 11M13 2L2 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="ud-modal-body">
+      <div class="ud-field">
+        <label class="ud-label">Password foun <span class="ud-label-hint">minimu 6 karakter</span></label>
+        <div style="position:relative">
+          <input id="inp-password" type="password" class="ud-input" placeholder="password foun…" style="padding-right:40px">
+          <button type="button" class="ud-pw-toggle" id="pw-toggle" onclick="togglePw()" title="Haree password">
+            <svg id="pw-eye" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5Z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="err-password" class="ud-error" hidden></div>
+      <div class="ud-modal-foot">
+        <button class="ud-btn ud-btn--ghost" onclick="closeModal('ud-modal-password')">Kansela</button>
+        <button class="ud-btn ud-btn--primary" id="btn-save-password" onclick="savePassword()">
+          <span>Reset</span>
+          <span class="ud-spinner" id="sp-password" hidden></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ── -->
+<div id="ud-toast" class="ud-toast" hidden>
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 7.5l3 3 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span id="ud-toast-msg"></span>
+</div>
+
+<!-- ═══════════════════════════════════════
+     STYLES
+═══════════════════════════════════════ -->
+<style>
+:root {
+  --ud-bg:      #f5f4f0;
+  --ud-surface: #ffffff;
+  --ud-border:  #e4e2db;
+  --ud-text:    #1a1917;
+  --ud-muted:   #7a7872;
+  --ud-accent:  #2563eb;
+  --ud-radius:  11px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.ud-wrap { max-width: 700px; margin: 0 auto; padding: 32px 20px; }
+
+/* Back */
+.ud-back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ud-muted); text-decoration: none; margin-bottom: 20px; transition: color .15s; }
+.ud-back:hover { color: var(--ud-text); }
+
+/* Card */
+.ud-card { background: var(--ud-surface); border: 1px solid var(--ud-border); border-radius: var(--ud-radius); padding: 20px; margin-bottom: 14px; }
+
+/* Profile card */
+.ud-profile      { display: flex; align-items: center; gap: 16px; }
+.ud-avatar-lg    { width: 52px; height: 52px; border-radius: 50%; background: #dbeafe; color: #1d4ed8; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ud-profile-info { flex: 1; }
+.ud-profile-name { margin: 0 0 6px; font-size: 18px; font-weight: 600; color: var(--ud-text); }
+.ud-profile-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+.ud-status-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #166534; }
+.ud-dot          { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.ud-dot--green   { background: #16a34a; }
+
+/* Chips */
+.ud-chip         { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: .03em; }
+.ud-chip--pa     { background: #fef3c7; color: #92400e; }
+.ud-chip--sk     { background: #d1fae5; color: #065f46; }
+.ud-chip--al     { background: #ede9fe; color: #4c1d95; }
+.ud-chip--mn     { background: #dbeafe; color: #1e40af; }
+.ud-chip--neutral{ background: #f1f0eb; color: var(--ud-muted); }
+.ud-chip--blue   { background: #dbeafe; color: #1e40af; }
+
+/* Section title */
+.ud-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ud-muted); margin: 20px 0 10px; }
+
+/* Info grid */
+.ud-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 0; }
+.ud-info-item { padding: 14px 20px; border-bottom: 1px solid var(--ud-border); border-right: 1px solid var(--ud-border); }
+.ud-info-item:nth-child(2n) { border-right: none; }
+.ud-info-item:nth-last-child(-n+2) { border-bottom: none; }
+.ud-info-label { font-size: 11px; color: var(--ud-muted); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.ud-info-value { font-size: 14px; color: var(--ud-text); font-weight: 500; }
+
+/* Action cards */
+.ud-actions-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ud-action-card  { display: flex; align-items: center; gap: 14px; }
+.ud-action-icon  { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ud-action-icon--blue  { background: #dbeafe; color: #1d4ed8; }
+.ud-action-icon--amber { background: #fef3c7; color: #92400e; }
+.ud-action-content { flex: 1; min-width: 0; }
+.ud-action-title { font-size: 14px; font-weight: 600; color: var(--ud-text); }
+.ud-action-desc  { font-size: 12px; color: var(--ud-muted); margin-top: 2px; }
+
+/* Buttons */
+.ud-btn          { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: background .15s; white-space: nowrap; }
+.ud-btn--primary { background: var(--ud-accent); color: #fff; }
+.ud-btn--primary:hover { background: #1d4ed8; }
+.ud-btn--outline { background: transparent; color: var(--ud-accent); border: 1px solid #bfdbfe; }
+.ud-btn--outline:hover { background: #eff6ff; }
+.ud-btn--ghost   { background: transparent; color: var(--ud-muted); border: 1px solid var(--ud-border); }
+.ud-btn--ghost:hover { background: var(--ud-bg); }
+
+/* Modal */
+.ud-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; z-index: 999; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.ud-modal-overlay.open { opacity: 1; pointer-events: all; }
+.ud-modal        { background: var(--ud-surface); border-radius: 14px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,.18); transform: translateY(12px); transition: transform .22s; margin: 16px; }
+.ud-modal-overlay.open .ud-modal { transform: translateY(0); }
+.ud-modal-head   { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 0; }
+.ud-modal-title  { font-size: 15px; font-weight: 600; color: var(--ud-text); margin: 0; }
+.ud-modal-close  { background: none; border: none; cursor: pointer; color: var(--ud-muted); padding: 4px; border-radius: 6px; display: flex; }
+.ud-modal-close:hover { background: var(--ud-bg); }
+.ud-modal-body   { padding: 16px 20px 20px; }
+.ud-modal-foot   { display: flex; justify-content: flex-end; gap: 10px; padding-top: 16px; border-top: 1px solid var(--ud-border); margin-top: 16px; }
+
+/* Form */
+.ud-field        { margin-bottom: 14px; }
+.ud-label        { display: flex; align-items: baseline; gap: 6px; font-size: 13px; font-weight: 500; color: var(--ud-text); margin-bottom: 6px; }
+.ud-label-hint   { font-size: 11px; color: var(--ud-muted); font-weight: 400; }
+.ud-input        { width: 100%; padding: 9px 12px; border: 1px solid var(--ud-border); border-radius: 8px; font-size: 14px; color: var(--ud-text); background: var(--ud-surface); box-sizing: border-box; outline: none; transition: border-color .15s; }
+.ud-input:focus  { border-color: var(--ud-accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+.ud-error        { background: #fef2f2; border: 1px solid #fecaca; border-radius: 7px; padding: 8px 12px; font-size: 13px; color: #b91c1c; margin-top: 10px; }
+
+/* pw toggle */
+.ud-pw-toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--ud-muted); padding: 4px; display: flex; }
+
+/* Spinner */
+.ud-spinner { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; border-radius: 50%; animation: ud-spin .6s linear infinite; }
+@keyframes ud-spin { to { transform: rotate(360deg); } }
+
+/* Toast */
+.ud-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1917; color: #fff; padding: 10px 18px; border-radius: 9px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.2); z-index: 1100; animation: toast-in .2s; }
+@keyframes toast-in { from { opacity:0; transform: translateX(-50%) translateY(8px); } }
+
+@media (max-width: 560px) {
+  .ud-info-grid   { grid-template-columns: 1fr; }
+  .ud-info-item   { border-right: none !important; }
+  .ud-actions-row { grid-template-columns: 1fr; }
+  .ud-profile     { flex-wrap: wrap; }
+}
+</style>
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════ -->
+<script>
+const MEMBRO_ID = {{ membro.id }};
+const CSRF      = '{{ csrf_token }}';
+
+function openModal(id)  {
+  document.getElementById(id).classList.add('open');
+  document.getElementById(id).removeAttribute('aria-hidden');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.getElementById(id).setAttribute('aria-hidden','true');
+}
+
+// Close on overlay click
+['ud-modal-username','ud-modal-password'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) closeModal(id);
+  });
+});
+
+function openUsernameModal() { openModal('ud-modal-username'); setTimeout(()=>document.getElementById('inp-username').select(), 50); }
+function openPasswordModal() { openModal('ud-modal-password'); setTimeout(()=>document.getElementById('inp-password').focus(), 50); }
+
+function togglePw() {
+  const inp = document.getElementById('inp-password');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('ud-toast');
+  document.getElementById('ud-toast-msg').textContent = msg;
+  t.hidden = false;
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => { t.hidden = true; }, 2800);
+}
+
+async function saveUsername() {
+  const val     = document.getElementById('inp-username').value.trim();
+  const errEl   = document.getElementById('err-username');
+  const btn     = document.getElementById('btn-save-username');
+  const spinner = document.getElementById('sp-username');
+
+  errEl.hidden = true;
+  if (!val) { errEl.textContent = 'Username la bele mamuk.'; errEl.hidden = false; return; }
+
+  btn.disabled = true; spinner.hidden = false;
+  try {
+    const res  = await fetch(`/Utilizadores/membro/users/${MEMBRO_ID}/api/username/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+      body: JSON.stringify({ new_username: val }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById('disp-username').textContent = data.new_username;
+      closeModal('ud-modal-username');
+      showToast('Username muda ho susesu ✓');
+    } else {
+      errEl.textContent = data.error; errEl.hidden = false;
+    }
+  } catch { errEl.textContent = 'Erru koneksaun.'; errEl.hidden = false; }
+  finally  { btn.disabled = false; spinner.hidden = true; }
+}
+
+async function savePassword() {
+  const val     = document.getElementById('inp-password').value;
+  const errEl   = document.getElementById('err-password');
+  const btn     = document.getElementById('btn-save-password');
+  const spinner = document.getElementById('sp-password');
+
+  errEl.hidden = true;
+  if (!val || val.length < 6) { errEl.textContent = 'Password minimu 6 karakter.'; errEl.hidden = false; return; }
+
+  btn.disabled = true; spinner.hidden = false;
+  try {
+    const res  = await fetch(`/Utilizadores/membro/users/${MEMBRO_ID}/api/password/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+      body: JSON.stringify({ new_password: val }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById('inp-password').value = '';
+      closeModal('ud-modal-password');
+      showToast('Password reset ho susesu ✓');
+    } else {
+      errEl.textContent = data.error; errEl.hidden = false;
+    }
+  } catch { errEl.textContent = 'Erru koneksaun.'; errEl.hidden = false; }
+  finally  { btn.disabled = false; spinner.hidden = true; }
+}
+</script>
+
+{% endblock %}

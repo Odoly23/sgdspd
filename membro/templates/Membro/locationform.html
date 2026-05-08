@@ -1,0 +1,82 @@
+{% extends "main/layout.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid"><br/>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card shadow-lg pt-3 rounded">
+                <div class="card-header">{{ legend|upper }}</div>
+                <div class="card-body">
+                              <form method="POST" id="addressForm" data-posts-url="{% url 'ajax_load_posts' %}" data-villages-url="{% url 'ajax_load_villages' %}" data-subvillages-url="{% url 'ajax_load_subvillages' %}" novalidate>
+            {% csrf_token %}
+            <div class="form-row">
+              <div class="form-group col-md-4 mb-0">
+                {{ form.municipality|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-4 mb-0">
+                {{ form.administrativepost|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-4 mb-0">
+                {{ form.village|as_crispy_field }}
+              </div>
+               <div class="form-group col-md-4 mb-0">
+                {{ form.aldeia|as_crispy_field }}
+              </div>
+            </div> <!--end form-row-->
+            <div class="button-row d-flex">
+              <a class="btn btn-secondary" href="{% url 'emp-detail' emp.hashed %}" title="Cancela"><i class="fa fa-close"></i> Cancela</a>
+              <button class="btn btn-primary ml-1" type="submit" title="Rai">Rai <i class="fa fa-save"></i></button>
+            </div> <!-- end button -->
+          </form>
+                </div> <!--end card-body-->
+            </div> <!--end card-->
+        </div> <!--end col-->
+    </div> <!--end row-->
+</div><!--end container-->
+{% endblock %}
+{% block skrip %}
+<script>
+  // Municipality → Administrative Post
+  $("#id_municipality").change(function () {
+    var municipalityId = $(this).val();
+    $.ajax({
+      url: '{% url "ajax_load_posts" %}',
+      data: {
+        'municipality': municipalityId
+      },
+      success: function (data) {
+        $("#id_administrativepost").html(data);
+      }
+    });
+  });
+
+  // Administrative Post → Village
+  $("#id_administrativepost").change(function () {
+    var postId = $(this).val();
+    $.ajax({
+      url: '{% url "ajax_load_villages" %}',
+      data: {
+        'post': postId
+      },
+      success: function (data) {
+        $("#id_village").html(data);
+      }
+    });
+  });
+
+  $("#id_village").change(function() {
+    var aldeiaId = $(this).val();
+    $.ajax({
+      url: '{% url "ajax_load_subvillages" %}',
+      data:{
+        'aldeia': aldeiaId
+      },
+      success: function(data){
+        $("#id_aldeia").html(data)
+      }
+    });
+  });
+</script>
+{% endblock %}
+

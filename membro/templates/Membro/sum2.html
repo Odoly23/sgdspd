@@ -1,0 +1,46 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+{% block content %}
+  <div class="card  border-0  mb-3">
+    <div class="card-body">
+                   <table class="table table-sm" id="example2" cellspacing="0" width="100%">
+                  <thead class="table-light text-center">
+                    <tr>
+                      <th>SUKU</th>
+                      <th>ALDEIA</th>
+                      <th>POZISAUN</th>
+                      <th>MEMBRO</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+
+                    {% for item in data %}
+                      {% for row in item.rows %}
+                        <tr>
+                          {% if forloop.parentloop.first and forloop.first %}
+                            <td rowspan="{{ total_rows }}" class="align-middle text-center">
+                              {{ village.name }}
+                            </td>
+                          {% endif %}
+                          {% if forloop.first %}
+                            <td rowspan="{{ item.rowspan }}" class="align-middle text-center">
+                              {{ item.aldeia }}
+                            </td>
+                          {% endif %}
+
+                          <td class="text-center mb-0 ">{{ row.position }}</td>
+                          <td class="text-center mb-0 ">{{ row.name }}</td>
+
+                        </tr>
+
+                      {% endfor %}
+
+                    {% endfor %}
+
+                  </tbody>
+
+                </table>
+    </div>
+  </div>
+{% endblock %}

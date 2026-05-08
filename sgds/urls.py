@@ -27,7 +27,11 @@ urlpatterns = [
     path('login/', loginPage, name='login'),
     path('logout/', logout_view, name='logout'),
     path('', include('main.urls')),
-    path('Membru/', include('membro.urls'))
+    path('Membru/', include('membro.urls')),
+    path('custom/', include('custom.urls')),
+    path('summernote/', include('django_summernote.urls')),
+    path('API/Report/', include('report.Api.urls')),
+    path('Utilizadores/', include('user.urls'))
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

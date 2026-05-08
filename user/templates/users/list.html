@@ -1,0 +1,408 @@
+{% extends "main/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="mu-wrap">
+
+  <!-- ── Header ── -->
+  <div class="mu-header">
+    <div>
+      <h1 class="mu-title">Jestaun Utilizadór</h1>
+      <p class="mu-sub">Membro ho estrutura Postu · Suku · Aldeia</p>
+    </div>
+  </div>
+
+  <!-- ── Search bar ── -->
+  <div class="mu-search-wrap">
+    <span class="mu-search-icon">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M10.5 10.5L13.5 13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <input id="mu-search" class="mu-search" type="text" placeholder="Buka naran membro…">
+  </div>
+
+  <!-- ── Table ── -->
+  <div class="mu-table-wrap">
+    <table class="mu-table" id="mu-table">
+      <thead>
+        <tr>
+          <th>Naran</th>
+          <th>Estrutura</th>
+          <th>Pozisaun</th>
+          <th>Status</th>
+          <th>Aksaun</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in membros %}
+        {% with pos=m.membroposition %}
+        <tr class="mu-row" data-name="{{ m.name|lower }}">
+          <td class="mu-name">
+            <span class="mu-avatar">{{ m.name|first|upper }}</span>
+            {{ m.name }}
+          </td>
+          <td>
+            {% if pos.estructure %}
+            <span class="mu-badge mu-badge--{{ pos.estructure.code|lower }}">
+              {{ pos.estructure.code }}
+            </span>
+            {% else %}—{% endif %}
+          </td>
+          <td class="mu-pos">{{ pos.position|default:"—" }}</td>
+          <td>
+            {% if m.membrouser %}
+            <span class="mu-status mu-status--active">
+              <span class="mu-dot"></span>Ativu
+            </span>
+            {% else %}
+            <span class="mu-status mu-status--none">
+              <span class="mu-dot"></span>Laiha konta
+            </span>
+            {% endif %}
+          </td>
+          <td class="mu-actions">
+            {% if m.membrouser %}
+            <a href="{% url 'membro_user_detail' m.id %}" class="mu-btn mu-btn--ghost">
+              <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5Z" stroke="currentColor" stroke-width="1.4"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.4"/></svg>
+              Detail
+            </a>
+            {% else %}
+            <button
+              class="mu-btn mu-btn--primary"
+              onclick="openCreateModal({{ m.id }}, '{{ m.name|escapejs }}', '{{ pos.estructure.code|default:"-" }}')">
+              <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M7.5 1v13M1 7.5h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              Kria Uzuáriu
+            </button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endwith %}
+        {% empty %}
+        <tr><td colspan="5" class="mu-empty">Laiha membro ho estrutura ne'ebé válidu.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     MODAL — Kria Utilizadór
+═══════════════════════════════════════════════════ -->
+<div id="mu-modal" class="mu-modal-overlay" aria-hidden="true">
+  <div class="mu-modal" role="dialog" aria-labelledby="mu-modal-title">
+
+    <div class="mu-modal-head">
+      <h2 id="mu-modal-title" class="mu-modal-title">Kria Utilizadór</h2>
+      <button class="mu-modal-close" onclick="closeModal()" aria-label="Taka">
+        <svg width="16" height="16" viewBox="0 0 15 15" fill="none"><path d="M2 2l11 11M13 2L2 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="mu-modal-body">
+      <!-- Membro info chip -->
+      <div class="mu-modal-info" id="mu-modal-info">
+        <span class="mu-avatar mu-avatar--sm" id="mu-modal-avatar">?</span>
+        <div>
+          <div class="mu-modal-info-name" id="mu-modal-membro-name">—</div>
+          <div class="mu-modal-info-sub" id="mu-modal-membro-sub">—</div>
+        </div>
+      </div>
+
+      <form id="mu-create-form" autocomplete="off">
+        {% csrf_token %}
+
+        <!-- Username -->
+        <div class="mu-field">
+          <label class="mu-label" for="mu-username">
+            Username
+            <span class="mu-label-hint">auto-jenera, bele edita</span>
+          </label>
+          <input id="mu-username" name="username" type="text" class="mu-input" placeholder="username@#mci" required>
+        </div>
+
+        <!-- Group -->
+        <div class="mu-field">
+          <label class="mu-label" for="mu-group">Grupu Aksés</label>
+          <div class="mu-select-wrap">
+            <select id="mu-group" name="group_id" class="mu-input mu-select" required>
+              <option value="">-- Hili Grupu --</option>
+              <!-- options injected by JS -->
+            </select>
+            <svg class="mu-select-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <!-- Password info -->
+        <div class="mu-pw-info">
+          <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M7.5 7v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="7.5" cy="5" r=".8" fill="currentColor"/></svg>
+          Password padrãu: <strong>pada@#2026</strong>
+        </div>
+
+        <div id="mu-error" class="mu-error" hidden></div>
+
+        <div class="mu-modal-foot">
+          <button type="button" class="mu-btn mu-btn--ghost" onclick="closeModal()">Kansela</button>
+          <button type="submit" id="mu-submit" class="mu-btn mu-btn--primary">
+            <span id="mu-submit-label">Kria Agora</span>
+            <span id="mu-submit-spinner" class="mu-spinner" hidden></span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     STYLES
+═══════════════════════════════════════════════════ -->
+<style>
+:root {
+  --mu-bg:       #f5f4f0;
+  --mu-surface:  #ffffff;
+  --mu-border:   #e4e2db;
+  --mu-text:     #1a1917;
+  --mu-muted:    #7a7872;
+  --mu-accent:   #2563eb;
+  --mu-accent-h: #1d4ed8;
+  --mu-green:    #16a34a;
+  --mu-radius:   10px;
+  --mu-shadow:   0 4px 24px rgba(0,0,0,.08);
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.mu-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+
+/* Header */
+.mu-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
+.mu-title  { font-size: 22px; font-weight: 600; color: var(--mu-text); margin: 0; }
+.mu-sub    { font-size: 13px; color: var(--mu-muted); margin: 4px 0 0; }
+
+/* Search */
+.mu-search-wrap { position: relative; margin-bottom: 16px; }
+.mu-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--mu-muted); pointer-events: none; display: flex; }
+.mu-search      { width: 100%; padding: 9px 12px 9px 36px; border: 1px solid var(--mu-border); border-radius: 8px; font-size: 14px; color: var(--mu-text); background: var(--mu-surface); box-sizing: border-box; transition: border-color .15s; outline: none; }
+.mu-search:focus { border-color: var(--mu-accent); }
+
+/* Table */
+.mu-table-wrap { background: var(--mu-surface); border: 1px solid var(--mu-border); border-radius: var(--mu-radius); overflow: hidden; }
+.mu-table      { width: 100%; border-collapse: collapse; font-size: 14px; }
+.mu-table thead tr { background: #fafaf8; }
+.mu-table th   { padding: 11px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--mu-muted); text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--mu-border); white-space: nowrap; }
+.mu-table td   { padding: 13px 16px; border-bottom: 1px solid var(--mu-border); color: var(--mu-text); }
+.mu-row:last-child td { border-bottom: none; }
+.mu-row { transition: background .12s; }
+.mu-row:hover  { background: #fafaf8; }
+
+/* Avatar */
+.mu-avatar     { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: #dbeafe; color: #1d4ed8; font-weight: 600; font-size: 12px; margin-right: 8px; flex-shrink: 0; }
+.mu-avatar--sm { width: 38px; height: 38px; font-size: 14px; flex-shrink: 0; }
+.mu-name       { display: flex; align-items: center; font-weight: 500; }
+.mu-pos        { color: var(--mu-muted); }
+.mu-empty      { text-align: center; color: var(--mu-muted); padding: 32px !important; }
+
+/* Badge estrutura */
+.mu-badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+.mu-badge--pa { background: #fef3c7; color: #92400e; }
+.mu-badge--sk { background: #d1fae5; color: #065f46; }
+.mu-badge--al { background: #ede9fe; color: #4c1d95; }
+.mu-badge--mn { background: #dbeafe; color: #1e40af; }
+
+/* Status */
+.mu-status        { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; }
+.mu-dot           { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.mu-status--active .mu-dot  { background: var(--mu-green); }
+.mu-status--active           { color: #166534; }
+.mu-status--none .mu-dot    { background: #d1d5db; }
+.mu-status--none             { color: var(--mu-muted); }
+
+/* Buttons */
+.mu-btn          { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: background .15s, opacity .15s; white-space: nowrap; }
+.mu-btn--primary { background: var(--mu-accent); color: #fff; }
+.mu-btn--primary:hover { background: var(--mu-accent-h); }
+.mu-btn--ghost   { background: transparent; color: var(--mu-muted); border: 1px solid var(--mu-border); }
+.mu-btn--ghost:hover { background: var(--mu-bg); color: var(--mu-text); }
+.mu-actions      { white-space: nowrap; }
+
+/* ── MODAL ── */
+.mu-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; z-index: 999; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.mu-modal-overlay.open { opacity: 1; pointer-events: all; }
+.mu-modal        { background: var(--mu-surface); border-radius: 14px; width: 100%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,.18); transform: translateY(12px); transition: transform .22s; overflow: hidden; margin: 16px; }
+.mu-modal-overlay.open .mu-modal { transform: translateY(0); }
+
+.mu-modal-head   { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px 0; }
+.mu-modal-title  { font-size: 16px; font-weight: 600; color: var(--mu-text); margin: 0; }
+.mu-modal-close  { background: none; border: none; cursor: pointer; color: var(--mu-muted); padding: 4px; border-radius: 6px; display: flex; }
+.mu-modal-close:hover { background: var(--mu-bg); color: var(--mu-text); }
+.mu-modal-body   { padding: 18px 22px 22px; }
+
+/* Membro info chip */
+.mu-modal-info   { display: flex; align-items: center; gap: 12px; background: var(--mu-bg); border-radius: 9px; padding: 12px 14px; margin-bottom: 18px; }
+.mu-modal-info-name { font-size: 14px; font-weight: 600; color: var(--mu-text); }
+.mu-modal-info-sub  { font-size: 12px; color: var(--mu-muted); margin-top: 1px; }
+
+/* Form */
+.mu-field        { margin-bottom: 16px; }
+.mu-label        { display: flex; align-items: baseline; gap: 6px; font-size: 13px; font-weight: 500; color: var(--mu-text); margin-bottom: 6px; }
+.mu-label-hint   { font-size: 11px; color: var(--mu-muted); font-weight: 400; }
+.mu-input        { width: 100%; padding: 9px 12px; border: 1px solid var(--mu-border); border-radius: 8px; font-size: 14px; color: var(--mu-text); background: var(--mu-surface); box-sizing: border-box; outline: none; transition: border-color .15s; }
+.mu-input:focus  { border-color: var(--mu-accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+.mu-select-wrap  { position: relative; }
+.mu-select       { appearance: none; cursor: pointer; padding-right: 32px; }
+.mu-select-chevron { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--mu-muted); }
+
+/* Password info */
+.mu-pw-info { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--mu-muted); background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 7px; padding: 9px 12px; margin-bottom: 4px; }
+.mu-pw-info strong { color: #166534; }
+
+.mu-error { background: #fef2f2; border: 1px solid #fecaca; border-radius: 7px; padding: 9px 12px; font-size: 13px; color: #b91c1c; margin-top: 12px; }
+
+.mu-modal-foot   { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--mu-border); }
+
+/* Spinner */
+.mu-spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: mu-spin .6s linear infinite; }
+@keyframes mu-spin { to { transform: rotate(360deg); } }
+</style>
+
+<!-- ═══════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════ -->
+<script>
+// ── Serialize groups from Django to JS ──
+const ALL_GROUPS = {{ groups_json|safe }};
+
+// ── State ──
+let currentMembroId   = null;
+let currentEstrutCode = null;
+
+// ── Open modal ──
+function openCreateModal(membroId, membroName, estrutCode) {
+  currentMembroId   = membroId;
+  currentEstrutCode = estrutCode;
+
+  // Fill membro chip
+  document.getElementById('mu-modal-avatar').textContent  = membroName[0].toUpperCase();
+  document.getElementById('mu-modal-membro-name').textContent = membroName;
+  document.getElementById('mu-modal-membro-sub').textContent  =
+    estrutCode ? `Estrutura: ${estrutCode}` : 'Estrutura la definidu';
+
+  // Auto-fill username (fetch preview)
+  fetch(`/Utilizadores/membro/users/${membroId}/api/preview/`)
+    .then(r => r.json())
+    .then(d => { document.getElementById('mu-username').value = d.username; })
+    .catch(() => {});
+
+  // Fill group options — show all groups; pre-select based on estrutura
+  const groupMap = { AL: 'ald', SK: 'suku', PA: 'postu', MN: 'staff' };
+  const suggested = groupMap[estrutCode] || '';
+  const sel = document.getElementById('mu-group');
+  sel.innerHTML = '<option value="">-- Hili Grupu --</option>';
+  ALL_GROUPS.forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g.id;
+    opt.textContent = g.name;
+    if (g.name === suggested) opt.selected = true;
+    sel.appendChild(opt);
+  });
+
+  // Reset error
+  const errEl = document.getElementById('mu-error');
+  errEl.hidden = true;
+  errEl.textContent = '';
+
+  // Open overlay
+  document.getElementById('mu-modal').classList.add('open');
+  document.getElementById('mu-modal').removeAttribute('aria-hidden');
+  document.getElementById('mu-username').focus();
+}
+
+// ── Close modal ──
+function closeModal() {
+  document.getElementById('mu-modal').classList.remove('open');
+  document.getElementById('mu-modal').setAttribute('aria-hidden', 'true');
+  document.getElementById('mu-create-form').reset();
+}
+
+// Close on overlay click
+document.getElementById('mu-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ── Submit create user ──
+document.getElementById('mu-create-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const username = document.getElementById('mu-username').value.trim();
+  const groupId  = document.getElementById('mu-group').value;
+  const errEl    = document.getElementById('mu-error');
+  const submitBtn    = document.getElementById('mu-submit');
+  const submitLabel  = document.getElementById('mu-submit-label');
+  const submitSpinner = document.getElementById('mu-submit-spinner');
+
+  errEl.hidden = true;
+  submitBtn.disabled = true;
+  submitLabel.textContent = 'Prosesu…';
+  submitSpinner.hidden = false;
+
+  try {
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const res  = await fetch(`/Utilizadores/membro/users/${currentMembroId}/api/create/`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+      body:    JSON.stringify({ username, group_id: groupId ? parseInt(groupId) : null }),
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      closeModal();
+      // Update row in table without full reload
+      updateRowAfterCreate(currentMembroId, data.username);
+    } else {
+      errEl.textContent = data.error;
+      errEl.hidden = false;
+    }
+  } catch(err) {
+    errEl.textContent = 'Erru koneksaun. Tenta fali.';
+    errEl.hidden = false;
+  } finally {
+    submitBtn.disabled = false;
+    submitLabel.textContent = 'Kria Agora';
+    submitSpinner.hidden = true;
+  }
+});
+
+// ── Update table row after successful create ──
+function updateRowAfterCreate(membroId, username) {
+  // Find all buttons with onclick that contains the membroId
+  const btns = document.querySelectorAll(`button[onclick*="openCreateModal(${membroId},"]`);
+  btns.forEach(btn => {
+    const td     = btn.closest('td');
+    const row    = btn.closest('tr');
+
+    // Replace action button with detail link
+    td.innerHTML = `<a href="/Utilizadores/membro/users/${membroId}/detail/" class="mu-btn mu-btn--ghost">
+      <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5Z" stroke="currentColor" stroke-width="1.4"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.4"/></svg>
+      Detail
+    </a>`;
+
+    // Update status cell (4th td)
+    const statusTd = row.querySelectorAll('td')[3];
+    statusTd.innerHTML = `<span class="mu-status mu-status--active"><span class="mu-dot"></span>Ativu</span>`;
+
+    // Brief highlight
+    row.style.background = '#f0fdf4';
+    setTimeout(() => { row.style.background = ''; row.style.transition = 'background 1.2s'; }, 1200);
+  });
+}
+
+// ── Live search ──
+document.getElementById('mu-search').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('#mu-table .mu-row').forEach(row => {
+    row.style.display = row.dataset.name.includes(q) ? '' : 'none';
+  });
+});
+</script>
+
+{% endblock %}

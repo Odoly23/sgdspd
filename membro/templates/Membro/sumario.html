@@ -4,19 +4,18 @@
 {% block content %}
 <div class="container-fluid">
   <div class="card shadow-sm border-0 rounded-4 mb-3">
-    <div class="card-body text-center d-flex justify-content-center flex-wrap gap-2">
-
-      {% if group == 'staff' or group == 'admin' %}
-        <a class="btn btn-sm btn-info mb-2" href="">
+    <div class="card-body text-center d-flex justify-content-center align-items-center">
+      {% if group == 'ald' %}
+        <a class="btn btn-sm btn-info mb-2" href="{% url 'add-mem' %}">
           Rejistu Membro <i class="fa fa-plus-square"></i>
         </a>
       {% endif %}
 
-      <a class="btn btn-sm btn-success mb-2" href="">
+      <a class="btn btn-sm btn-success mb-2 ml-1" href="{% url 'lista-geral' %}">
         Lista Geral <i class="fa fa-list"></i>
       </a>
 
-      <a class="btn btn-sm btn-warning mb-2" href="">
+      <a class="btn btn-sm btn-warning mb-2 ml-1" href="">
         Sumario Geral <i class="fa fa-table"></i>
       </a>
 
@@ -42,11 +41,15 @@
           <thead class="text-center">
             <tr>
               <th rowspan="2" class="align-middle">No</th>
-              <th rowspan="2" class="align-middle">{% if group == "postu" and group == "suku" %}
-                SUKU {% else %} Aldeia
-              {% endif %}</th>
+              <th rowspan="2" class="align-middle">
+                {% if group == "postu" or group == "suku" %}
+                SUKU 
+                {% else %}
+                 Aldeia
+              {% endif %}
+            </th>
               <th colspan="2">Membro</th>
-              <th rowspan="2">Total</th>
+              <th rowspan="2" class="align-middle">Total</th>
             </tr>
             <tr>
               <th>Mane</th>
@@ -61,20 +64,20 @@
               <td class="text-left">{{ obj.nama }}</td>
 
               <td>
-                <a href="">
+                <a href="{% url 'lista-membru' 'mane' obj.id %}">
                   {{ obj.male }}
                 </a>
               </td>
 
               <td>
-                <a href="">
+                <a href="{% url 'lista-membru' 'feto' obj.id %}">
                   {{ obj.female }}
                 </a>
               </td>
 
               <td>
                 <strong>
-                  <a href="">
+                  <a href="{% url 'lista-membru' 'total' obj.id %}">
                     {{ obj.total }}
                   </a>
                 </strong>
@@ -92,7 +95,7 @@
   <!-- ================= CHARTS ================= -->
   <div class="row mb-3">
 
-    <div class="col-md-5 mb-3">
+    <div class="col-md-4 mb-3">
       <div class="card border-0 rounded-4 shadow-sm p-3 h-100">
         <p class="text-uppercase text-muted font-weight-bold small">
           Total Dados Membro Baseado Sexu
@@ -101,7 +104,7 @@
       </div>
     </div>
 
-    <div class="col-md-7 mb-3">
+    <div class="col-md-8 mb-3">
       <div class="card border-0 rounded-4 shadow-sm p-3 h-100">
         <p class="text-uppercase text-muted font-weight-bold small">
           Total Dados Membro Baseado Estado Civil
@@ -133,15 +136,38 @@
       </div>
     </div>
 
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted text-uppercase small">
+            Sexu no Estado Civil
+          </h6>
+
+          <canvas id="cGabung"></canvas>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body">
+      <h6 class="text-muted text-uppercase small">
+        Nivel Edukasaun
+      </h6>
+
+      <canvas id="cEdu"></canvas>
+
+    </div>
+  </div>
+</div>
   </div>
 
 </div>
 {% endblock %}
-
 {% block skrip %}
-<script src="{% static 'js/chart.js' %}"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-
+    {% include 'chart/all.js' %}
 </script>
+
 {% endblock %}

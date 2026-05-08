@@ -7,35 +7,52 @@ from custom.models import  BaseModel, Position, Country, Municipality, Administr
 						   Year, Estructure
 
 from config.upload_utills import upload_photo, upload_estado, upload_formal
+from django.core.exceptions import ValidationError
+from datetime import date
+import hashlib, uuid
 
 class Membru(BaseModel):
-	nu_id = models.CharField(max_length=15, verbose_name="Nu. Eleitoral", null=True, blank=False)
-	name= models.CharField(max_length=200, null=True, verbose_name="Naran")
-	pob = models.CharField(max_length=100, blank=True, null=True, verbose_name="Fatin Moris")
-	dob = models.DateField(null=True, verbose_name="Data Moris")
-	sex = models.CharField(choices=[('Mane','Mane'),('Feto','Feto')], max_length=6, null=True, blank=True, verbose_name="Sexu")
-	marital = models.CharField(choices=[('Solteiro/a','Solteiro/a'),('Casado/a','Casado/a'),('Divorciado/a','Divorciado/a'),('Viuvo/a','Viuvo/a')], max_length=15, null=True, blank=True, verbose_name="Estado Civil")
-	status = models.ForeignKey(Status, on_delete=models.CASCADE, null=True, verbose_name="Status")
-	year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True, verbose_name="Tinan", blank=True)
-	file = models.FileField(upload_to=upload_estado, null=True, blank=True,
-			validators=[FileExtensionValidator(allowed_extensions=['pdf'])], verbose_name="Anexa Eleitoral")
-	datetime = models.DateTimeField(null=True)
-	hashed = models.CharField(max_length=128, null=True)
+    nu_id = models.CharField(max_length=15, verbose_name="Nu. Eleitoral", null=True, blank=False)
+    name = models.CharField(max_length=200, null=True, verbose_name="Naran")
+    pob = models.CharField(max_length=100, blank=True, null=True, verbose_name="Fatin Moris")
+    dob = models.DateField(null=True, verbose_name="Data Moris")
+    sex = models.CharField(choices=[('Mane','Mane'),('Feto','Feto')], max_length=6, null=True, blank=True, verbose_name="Sexu")
+    marital = models.CharField(choices=[('Solteiro/a','Solteiro/a'),('Casado/a','Casado/a'),('Divorciado/a','Divorciado/a'),('Viuvo/a','Viuvo/a')], max_length=15, null=True, blank=True, verbose_name="Estado Civil")
+    status = models.ForeignKey(Status, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Status")
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True, verbose_name="Tinan", blank=True)
+    file = models.FileField(upload_to=upload_estado, null=True, blank=True,
+            validators=[FileExtensionValidator(allowed_extensions=['pdf'])], verbose_name="Anexa Eleitoral")
+    datetime = models.DateTimeField(null=True, blank=True)
+    hashed = models.CharField(max_length=128, null=True, blank=True)
+    is_conf = models.BooleanField(default=False)
+    date_conf = models.DateField(null=True, blank=True)
+    conf_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="distconf")
+    is_appr = models.BooleanField(default=False)
+    date_appr = models.DateField(null=True, blank=True)
+    appr_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='distappr')
+    
+    def __str__(self):
+        return f'{self.name}'
+        
+    def age(self):
+        if self.dob:
+            today = date.today()
+            return today.year - self.dob.year - ((today.month, today.day) < (self.dob.month, self.dob.day))
+        return None
+    def clean(self):
+        super().clean()
+        if self.dob:
+            umur = self.age()
+            if umur is not None and umur < 16:
+                raise ValidationError({'dob': f'Idade tenke 16 anos ba leten. Idade agora: {umur} anos'})
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs) 
+        if is_new and not self.hashed:
+            self.hashed = hashlib.blake2b(f"{self.id}-{uuid.uuid4()}".encode()).hexdigest()
+            super().save(update_fields=['hashed'])
 
-	
-	def __str__(self):
-		template = '{0.name}'
-		return template.format(self)
-	def age(self):
-		if self.dob:
-			return int((datetime.date.today() - self.dob).days / 365.25)
-		return None
 
-	def save(self, *args, **kwargs):
-		if not self.hashed:
-			temp_id = self.id or 0
-			self.hashed = hashlib.blake2b(str(temp_id).encode()).hexdigest()
-		super().save(*args, **kwargs)
 
 class ContactInfo(BaseModel):
 	membro = models.OneToOneField(Membru, on_delete=models.CASCADE, related_name='contactinfo')

@@ -1,0 +1,306 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card pt-1 rounded">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-10" style="margin:auto;">
+
+            <!-- ══════════════════════════════════
+                 CARD UTAMA
+            ══════════════════════════════════ -->
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <strong><i class="fas fa-id-card me-1"></i>{{ legend }}</strong>
+                <a href="" class="btn btn-sm btn-outline-primary">
+                  <i class="fas fa-edit"></i> Edita
+                </a>
+              </div>
+              <div class="card-body p-2">
+                <div class="table-responsive">
+                <!-- Form upload foto (hidden, submit via JS) -->
+                <form method="post" action=""
+                      enctype="multipart/form-data" id="photo-form">
+                  {% csrf_token %}
+                  <input type="file" id="photo-file" name="image" accept="image/*"
+                         style="display:none;" onchange="uploadFoto(this)">
+                </form>
+
+                <table class="table table-sm table-bordered mb-0">
+
+                  <!-- ── Baris 1: Naran + FOTO (rowspan) ── -->
+                  <tr>
+                    <td width="38%">Naran Kompletu</td>
+                    <td><strong>{{ obj.name|default:"—" }}</strong></td>
+                    <!-- FOTO dengan rowspan — hitung semua baris di bawah ini -->
+                    <td rowspan="30"
+                        style="width:200px; text-align:center; vertical-align:top; padding:12px 10px; background:#f8f9fa;">
+
+                      <!-- Gambar klik untuk ganti -->
+                      <div onclick="document.getElementById('photo-file').click();"
+                           style="cursor:pointer; position:relative; display:inline-block;"
+                           title="Klik hodi troka foto">
+
+                        {% if photo and photo.image %}
+                          <img id="foto-preview" src="{{ photo.image.url }}"
+                               width="160" height="160"
+                               style="border-radius:50%; object-fit:cover;
+                                      border:3px solid #2563a8;
+                                      box-shadow:0 3px 12px rgba(0,0,0,.18);
+                                      transition:filter .2s;">
+                        {% else %}
+                          <img id="foto-preview" src="{% static 'img/default.png' %}"
+                               width="160" height="160"
+                               style="border-radius:50%; object-fit:cover;
+                                      border:3px solid #adb5bd;
+                                      box-shadow:0 3px 12px rgba(0,0,0,.12);
+                                      transition:filter .2s;">
+                        {% endif %}
+
+                        <!-- Overlay hover -->
+                        <div id="foto-overlay"
+                             style="position:absolute; inset:0; border-radius:50%;
+                                    background:rgba(26,58,92,.55);
+                                    display:flex; flex-direction:column;
+                                    align-items:center; justify-content:center;
+                                    opacity:0; transition:opacity .2s; gap:4px;">
+                          <i class="fas fa-camera" style="color:#fff; font-size:1.3rem;"></i>
+                          <span style="color:#fff; font-size:.65rem; font-weight:700; letter-spacing:.05em;">TROKA FOTO</span>
+                        </div>
+                      </div>
+
+                      <!-- Nama & badge di bawah foto -->
+                      <div style="margin-top:8px; font-weight:700; color:#1a3a5c; font-size:.85rem; line-height:1.3;">
+                        {{ obj.name|default:"—" }}
+                      </div>
+                      <div style="margin-top:4px;">
+                        <span style="background:#2563a8; color:#fff; font-size:.68rem;
+                                     font-weight:700; padding:2px 10px; border-radius:20px;
+                                     letter-spacing:.04em;">
+                          {{ obj.nu_id|default:"N/A" }}
+                        </span>
+                      </div>
+                      {% if obj.status %}
+                      <div style="margin-top:6px;">
+                        <span style="background:#dbeafe; color:#1d4ed8; font-size:.72rem;
+                                     font-weight:700; padding:2px 10px; border-radius:20px;">
+                          {{ obj.status }}
+                        </span>
+                      </div>
+                      {% endif %}
+                    </td>
+                  </tr>
+
+                  <!-- ── Identidade ── -->
+                  <tr><td>Nu. Eleitoral</td>   <td><strong>{{ obj.nu_id|default:"—" }}</strong></td></tr>
+                  <tr><td>Sexu</td>             <td><strong>{{ obj.sex|default:"—" }}</strong></td></tr>
+                  <tr>
+                    <td>Fatin &amp; Data Moris</td>
+                    <td>
+                      <strong>{{ obj.pob|default:"—" }}</strong>
+                      &nbsp;/&nbsp;
+                      <strong>{{ obj.dob|date:"d/m/Y"|default:"—" }}</strong>
+                      {% if obj.age %}<small class="text-muted"> ({{ obj.age }} anos)</small>{% endif %}
+                    </td>
+                  </tr>
+                  <tr><td>Estado Civil</td>     <td><strong>{{ obj.marital|default:"—" }}</strong></td></tr>
+                  <tr><td>Status</td>           <td><strong>{{ obj.status|default:"—" }}</strong></td></tr>
+                  <tr><td>Tinan Rejistu</td>    <td><strong>{{ obj.year|default:"—" }}</strong></td></tr>
+                  <tr>
+                    <td>Konfirmadu</td>
+                    <td>
+                      {% if obj.is_conf %}
+                        <span class="badge bg-success">✓ Sin</span>
+                        {% if obj.date_conf %} {{ obj.date_conf|date:"d/m/Y" }}{% endif %}
+                        {% if obj.conf_by %}<small class="text-muted"> ({{ obj.conf_by.get_full_name|default:obj.conf_by.username }})</small>{% endif %}
+                      {% else %}
+                        <span class="badge bg-danger">✗ Lae</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Aprovadu</td>
+                    <td>
+                      {% if obj.is_appr %}
+                        <span class="badge bg-success">✓ Sin</span>
+                        {% if obj.date_appr %} {{ obj.date_appr|date:"d/m/Y" }}{% endif %}
+                        {% if obj.appr_by %}<small class="text-muted"> ({{ obj.appr_by.get_full_name|default:obj.appr_by.username }})</small>{% endif %}
+                      {% else %}
+                        <span class="badge bg-danger">✗ Lae</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% if obj.file %}
+                  <tr>
+                    <td>Anexa Eleitoral</td>
+                    <td><a href="{{ obj.file.url }}" target="_blank" class="btn btn-xs btn-sm btn-outline-danger"><i class="fas fa-file-pdf"></i> Haree PDF</a></td>
+                  </tr>
+                  {% endif %}
+
+                  <!-- ── Separator: Kontaktu ── -->
+                  <tr>
+                    <th colspan="2" style="background:#1a3a5c; color:#fff; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; padding:.35rem .75rem;">
+                      <i class="fas fa-phone me-1"></i>Kontaktu
+                      {% if contact %}
+                        <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-edit"></i> Edita</a>
+                      {% else %}
+                        <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-plus"></i> Aumenta</a>
+                      {% endif %}
+                    </th>
+                  </tr>
+                  {% if contact %}
+                  <tr><td>Nu. Telemovel</td><td><strong>{{ contact.phone|default:"—" }}</strong></td></tr>
+                  <tr><td>Email</td>         <td><strong>{{ contact.email|default:"—" }}</strong></td></tr>
+                  {% else %}
+                  <tr><td colspan="2"><em class="text-muted">Kontaktu seidauk rejistadu.</em></td></tr>
+                  {% endif %}
+
+                  <!-- ── Separator: Lokasaun ── -->
+                  <tr>
+                    <th colspan="2" style="background:#1a3a5c; color:#fff; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; padding:.35rem .75rem;">
+                      <i class="fas fa-map-marker-alt me-1"></i>Lokasaun Timor-Leste
+                      {% if location %}
+                        <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-edit"></i> Edita</a>
+                      {% else %}
+                        <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-plus"></i> Aumenta</a>
+                      {% endif %}
+                    </th>
+                  </tr>
+                  {% if location %}
+                  <tr><td>Municipiu</td>            <td><strong>{{ location.municipality|default:"—" }}</strong></td></tr>
+                  <tr><td>Postu Administrativu</td> <td><strong>{{ location.administrativepost|default:"—" }}</strong></td></tr>
+                  <tr><td>Suku</td>                 <td><strong>{{ location.village|default:"—" }}</strong></td></tr>
+                  <tr><td>Aldeia</td>               <td><strong>{{ location.aldeia|default:"—" }}</strong></td></tr>
+                  {% else %}
+                  <tr><td colspan="2"><em class="text-muted">Lokasaun seidauk rejistadu.</em></td></tr>
+                  {% endif %}
+
+                  <!-- ── Separator: Pojisaun ── -->
+                  <tr>
+                    <th colspan="2" style="background:#1a3a5c; color:#fff; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; padding:.35rem .75rem;">
+                      <i class="fas fa-sitemap me-1"></i>Pojisaun
+                      {% if position %}
+                        <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-edit"></i> Edita</a>
+                      {% else %}
+                        <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-plus"></i> Aumenta</a>
+                      {% endif %}
+                    </th>
+                  </tr>
+                  {% if position %}
+                  <tr><td>Estrutura</td><td><strong>{{ position.estructure|default:"—" }}</strong></td></tr>
+                  <tr><td>Pojisaun</td> <td><strong>{{ position.position|default:"—" }}</strong></td></tr>
+                  {% else %}
+                  <tr><td colspan="2"><em class="text-muted">Pojisaun seidauk rejistadu.</em></td></tr>
+                  {% endif %}
+
+                  <!-- ── Separator: Edukasaun ── -->
+                  <tr>
+                    <th colspan="2" style="background:#1a3a5c; color:#fff; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; padding:.35rem .75rem;">
+                      <i class="fas fa-graduation-cap me-1"></i>Edukasaun Formál
+                      <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-plus"></i> Aumenta</a>
+                    </th>
+                  </tr>
+                  {% if formaleducations %}
+                    {% for edu in formaleducations %}
+                    <tr>
+                      <td colspan="2" style="padding:.5rem .75rem;">
+                        <div class="d-flex justify-content-between align-items-start">
+                          <div>
+                            <strong style="color:#1a3a5c;">
+                              <i class="fas fa-certificate me-1" style="color:#e8a020;"></i>{{ edu.educationlevel }}
+                            </strong>
+                            <div style="font-size:.8rem; color:#64748b; margin-top:.2rem;">
+                              {% if edu.university %}<span class="me-2"><i class="fas fa-university me-1"></i>{{ edu.university }}</span>{% endif %}
+                              {% if edu.faculty %}<span class="me-2"><i class="fas fa-building me-1"></i>{{ edu.faculty }}</span>{% endif %}
+                              {% if edu.studyprogram %}<span class="me-2"><i class="fas fa-book me-1"></i>{{ edu.studyprogram }}</span>{% endif %}
+                              {% if edu.graduation_year %}<span><i class="fas fa-calendar me-1"></i>{{ edu.graduation_year|date:"Y" }}</span>{% endif %}
+                            </div>
+                            {% if edu.area %}<div style="font-size:.79rem; color:#2563a8;"><i class="fas fa-tag me-1"></i>{{ edu.area }}</div>{% endif %}
+                            {% if edu.summary %}<div style="font-size:.79rem; color:#64748b; margin-top:.25rem; border-top:1px solid #e2e8f0; padding-top:.25rem;">{{ edu.summary }}</div>{% endif %}
+                          </div>
+                          <div class="d-flex gap-1 ms-2">
+                            {% if edu.file %}
+                            <a href="{{ edu.file.url }}" target="_blank" class="btn btn-sm btn-outline-danger" style="font-size:.72rem; padding:.15rem .45rem;" title="Haree PDF">
+                              <i class="fas fa-file-pdf"></i>
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'education-update' edu.id %}" class="btn btn-sm btn-outline-secondary" style="font-size:.72rem; padding:.15rem .45rem;" title="Edita">
+                              <i class="fas fa-edit"></i>
+                            </a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                  <tr><td colspan="2"><em class="text-muted">Edukasaun seidauk rejistadu.</em></td></tr>
+                  {% endif %}
+
+                  <!-- ── Separator: Akonta ── -->
+                  {% if membrouser %}
+                  <tr>
+                    <th colspan="2" style="background:#1a3a5c; color:#fff; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; padding:.35rem .75rem;">
+                      <i class="fas fa-user-shield me-1"></i>Akonta Uzuariu Sistema
+                    </th>
+                  </tr>
+                  <tr><td>Username</td>      <td><strong>{{ membrouser.user.username|default:"—" }}</strong></td></tr>
+                  <tr><td>Naran Kompletu</td><td><strong>{{ membrouser.user.get_full_name|default:"—" }}</strong></td></tr>
+                  <tr><td>Email Sistema</td> <td><strong>{{ membrouser.user.email|default:"—" }}</strong></td></tr>
+                  <tr>
+                    <td>Aktivo</td>
+                    <td>
+                      {% if membrouser.user.is_active %}
+                        <span class="badge bg-success">✓ Aktivo</span>
+                      {% else %}
+                        <span class="badge bg-danger">✗ Inaktivo</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr><td>Data Kria</td><td><strong>{{ membrouser.created_at|date:"d/m/Y"|default:"—" }}</strong></td></tr>
+                  {% endif %}
+
+                </table>
+                <!-- /table -->
+                </div>
+              </div><!-- /card-body -->
+            </div><!-- /card -->
+
+          </div><!-- /col-sm-10 -->
+        </div><!-- /row -->
+      </div><!-- /card-body outer -->
+    </div><!-- /card outer -->
+  </div><!-- /col-sm-12 -->
+</div><!-- /row -->
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Hover effect foto
+  const wrap = document.querySelector('[onclick*="photo-file"]');
+  const ov   = document.getElementById('foto-overlay');
+  if (wrap && ov) {
+    wrap.addEventListener('mouseenter', () => {
+      document.getElementById('foto-preview').style.filter = 'brightness(.65)';
+      ov.style.opacity = '1';
+    });
+    wrap.addEventListener('mouseleave', () => {
+      document.getElementById('foto-preview').style.filter = '';
+      ov.style.opacity = '0';
+    });
+  }
+
+  function uploadFoto(input) {
+    if (!input.files || !input.files[0]) return;
+    // preview dulu
+    const reader = new FileReader();
+    reader.onload = e => document.getElementById('foto-preview').src = e.target.result;
+    reader.readAsDataURL(input.files[0]);
+    // submit setelah preview tampil
+    setTimeout(() => document.getElementById('photo-form').submit(), 350);
+  }
+</script>
+{% endblock %}

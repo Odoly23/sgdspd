@@ -1,0 +1,68 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="card shadow-sm border-0 rounded-4 mb-3">
+        <div class="card-body text-center">
+            <h5 class="font-weight-bold mb-0">
+                LISTA GERAL MEMBRO
+                <span class="text-primary">
+                    {{ estrutura|upper }}
+                </span>
+            </h5>
+        </div>
+    </div>
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover table-sm " id="example2">
+                    <thead class="text-center">
+                        <tr>
+                            <th>No</th>
+                            <th>Naran</th>
+                            <th>Sexu</th>
+                            <th>Data Moris</th>
+                            <th>Telefone</th>
+                            <th>Suco</th>
+                            <th>Aldeia</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in membros %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ m.name }}</td>
+                            <td>{{ m.sex }}</td>
+                            <td>{{ m.dob }}</td>
+                            <td>
+                                {% if m.contactinfo %}
+                                    {{ m.contactinfo.phone }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ m.locationtl.village }}
+                            </td>
+                            <td>
+                                {{ m.locationtl.aldeia }}
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <a href="{% url 'emp-detail' m.hashed %}" class="btn btn-sm btn-info mx-1 shadow-sm"><i class="fa fa-eye"></i></a>
+                                    {% if group == 'admin' or group == 'post' %}
+                                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#hamos-{{membru.id}}"><i class="fa fa-trash"></i>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
