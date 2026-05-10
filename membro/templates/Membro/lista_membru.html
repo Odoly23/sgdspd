@@ -17,7 +17,7 @@
 
             <div class="table-responsive">
 
-                <table class="table table-bordered table-striped table-hover table-sm" width="100%">
+                <table class="table table-bordered table-striped table-hover table-sm" width="100%" id="example">
 
                     <thead class="text-center">
 
@@ -75,4 +75,11 @@
 
 </div>
 
+{% endblock %}
+{% block skrip %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#example').DataTable();
+        } );
+    </script>
 {% endblock %}

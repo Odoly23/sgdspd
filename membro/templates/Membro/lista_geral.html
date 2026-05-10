@@ -14,10 +14,10 @@
             </h5>
         </div>
     </div>
-    <div class="card shadow-sm border-0 rounded-4">
+    <div class="card border-0">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover table-sm " id="example2">
+                <table class="table table-bordered table-striped table-hover table-sm " id="example">
                     <thead class="text-center">
                         <tr>
                             <th>No</th>
@@ -64,5 +64,11 @@
         </div>
     </div>
 </div>
-
+{% endblock %}
+{% block skrip %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#example').DataTable();
+        } );
+    </script>
 {% endblock %}

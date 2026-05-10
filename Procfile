@@ -1,0 +1,1 @@
+web: gunicorn sgds.wsgi:application

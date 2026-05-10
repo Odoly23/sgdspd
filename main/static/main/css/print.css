@@ -1,0 +1,133 @@
+@page {
+    size: auto;
+}
+body {
+    margin: 10px;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #444444;
+}
+  
+  h2 { font-size: 28px; margin: 5px;}
+  h3 { font-size: 20px; margin: 5px;}
+  h4 { font-size: 18px; margin: 5px; }
+  h5 { font-size: 14px; margin: 5px; }
+  h6 { font-size: 12px; margin: 5px; }
+  
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 9px;
+    color: black;
+}
+thead {
+    background-color: #5f788a;
+    display: table-header-group;
+}
+tfoot {
+    display: table-footer-group;
+}
+th {
+    padding: 4px;
+    padding-bottom: 0;
+    /* background-color: #5f788a; */
+    /* font-size: small; */
+}
+td {
+    /* font-size: 8px; */
+    padding: 1px;
+    padding-bottom: 0;
+    /* font-size: small; */
+}
+div {
+    /* background: gray; */
+    /* width:20%; */
+    color: white;
+    margin-top: 2px;
+}
+p {
+    font-size: 10px;
+    padding: 5px;
+}
+.f9 {
+    font-size: 9px;
+    color: black;
+}
+
+.column {
+    float: left;
+    width: 25%;
+}
+  
+  /* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.box {
+    width: 60%;
+    border: 1px solid black;
+    color: black;
+    padding: 5;
+    box-shadow: 5px 5px #888888;
+}
+.box2 {
+    width: 100%;
+    border: 1px solid black;
+    color: black;
+    padding: 5;
+    box-shadow: 5px 5px #888888;
+}
+.box3 {
+    width: 100%;
+    border: 1px solid black;
+    color: black;
+    padding: 5;
+}
+
+.img_pos {
+    position: absolute;
+}
+
+.img_pos2 {
+    position: relative;
+    width: 300px;
+}
+.img_pos3 {
+    position: relative;
+    width: 300px;
+}
+.i-black {
+    color: black;
+}
+.i-blue1 {
+    color: rgb(3, 17, 48);
+}
+.i-blue2 {
+    color: rgb(8, 44, 122);
+}
+.bg-one {
+    color: black;
+}
+
+.table_bg_one {
+    background-color: #7fb1d5;
+    color: black;
+}
+.table_bg_two {
+    background-color: #b1bdc5;
+    color: black;
+}
+.table_bg_three {
+    background-color: #e2e7eb;
+    color: black;
+}
+.table_bg_four {
+    background-color: #f2f4f5;
+    color: black;
+}
+
+.left { text-align: left; }
+.right { text-align: right; }

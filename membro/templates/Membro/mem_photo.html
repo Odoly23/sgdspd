@@ -1,0 +1,49 @@
+{% extends "main/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid"><br/>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="card shadow-lg pt-3 rounded">
+				<div class="card-header">{{ legend|upper }}</div>
+				<div class="card-body">
+				<form method="POST" enctype="multipart/form-data">
+				{% csrf_token %}
+					<div class="row">
+						<div class="col-sm-6">
+							{% if img.image %}
+								<p><label for="image">Current photo</label></p>
+								<img src="{{ img.image.url }}" width="120" />
+							{% endif %}
+						</div>
+						<div class="col-sm-6">
+							<p><label for="image">Uploaded photo</label></p>
+							<p><img id="output" width="150"/></p>
+						</div>
+					</div>
+					<hr/>
+					{{ form.image|as_crispy_field }}
+					<div class="button-row d-flex">
+						<a class="btn btn-secondary mr-1" href="{% url 'employee-detail' hashid %}">
+							<i class="fa fa-arrow-circle-left"></i> Back
+						</a>
+						<button class="btn btn-primary" type="submit" title="Update">
+							SAVE <i class="fa fa-save"></i>
+						</button>
+					</div> <!--end button -->
+				</form>
+				</div> <!--end card-body-->
+			</div> <!--end card-->
+		</div> <!--end col-->
+	</div> <!--end row-->
+</div><!--end container-->
+{% endblock %}
+{% block scripts %}
+	<!-- display image after browse -->
+	<script type="text/javascript">
+		$("input").change(function(e) {
+			var read = document.getElementById('output');
+			read.src = URL.createObjectURL(event.target.files[0]);
+		});
+	</script>
+{% endblock %}

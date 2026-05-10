@@ -75,13 +75,13 @@ class ContactInfoForm(forms.ModelForm):
 		self.helper.form_method = 'post'
 		self.helper.layout = Layout(
 			Row(
-				Column('email', css_class='form-group col-md-4 mb-0'),
-				Column('phone', css_class='form-group col-md-4 mb-0'),
+				Column('email', css_class='form-group col-md-6 mb-0'),
+				Column('phone', css_class='form-group col-md-6 mb-0'),
 				css_class='form-row'
 			),
 			HTML("""
-                <div class="text-center mt-4">
-                    <div class="text-left mt-4">
+                <div class="text-center">
+                    <div class="text-left">
                         <button class="btn btn-sm btn-labeled btn-info" type="submit" title="Save">
                             <span class="btn-label"><i class="fa fa-save"></i></span> Save
                         </button>
@@ -220,19 +220,55 @@ class EmployeePositionForm(forms.ModelForm):
     class Meta:
         model = MembroPosition
         fields = ['estructure','position']  
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-
         self.helper.layout = Layout(
 
             Row(
-                Column('estructure', css_class='col-md-6'),
-                Column('position', css_class='col-md-6'),
+                Column('estructure', css_class='form-group col-md-6 mb-0'),
+                Column('position', css_class='form-group col-md-6 mb-0'),
+				css_class='form-row'
             ),
+			HTML("""
+                <div class="text-center mt-4">
+                    <div class="text-left mt-4">
+                        <button class="btn btn-sm btn-labeled btn-info" type="submit" title="Save">
+                            <span class="btn-label"><i class="fa fa-save"></i></span> Save
+                        </button>
+
+                        <button class="btn btn-sm btn-labeled btn-secondary" type="button" onclick="history.back()">
+                            <span class="btn-label"><i class="fa fa-window-close"></i></span> Cancel
+                        </button>
+                    </div>
+                </div>
+            """)
+        )
+
+
+class PhotoUploadForm(forms.ModelForm):
+	image = forms.FileField(label="Upload Photo", required=False)
+
+	class Meta:
+		model = Photo
+		fields = ['image']
+
+
+class EmployeeStatusForm(forms.ModelForm):
+	class Meta:
+		model = Membru
+		fields = ['status']
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.layout = Layout(
+			Row(
+				Column('status', css_class='form-group col-md-4 mb-0'),
+				css_class='form-row'
+			),
 			HTML("""
                 <div class="text-center mt-4">
                     <div class="text-left mt-4">

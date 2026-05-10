@@ -22,8 +22,7 @@
               <div class="card-body p-2">
                 <div class="table-responsive">
                 <!-- Form upload foto (hidden, submit via JS) -->
-                <form method="post" action=""
-                      enctype="multipart/form-data" id="photo-form">
+               <form method="post" action="{% url 'photo-update' obj.hashed %}" enctype="multipart/form-data" id="photo-form">
                   {% csrf_token %}
                   <input type="file" id="photo-file" name="image" accept="image/*"
                          style="display:none;" onchange="uploadFoto(this)">
@@ -47,14 +46,14 @@
                         {% if photo and photo.image %}
                           <img id="foto-preview" src="{{ photo.image.url }}"
                                width="160" height="160"
-                               style="border-radius:50%; object-fit:cover;
-                                      border:3px solid #2563a8;
+                               style="object-fit:cover;
+                                     
                                       box-shadow:0 3px 12px rgba(0,0,0,.18);
                                       transition:filter .2s;">
                         {% else %}
                           <img id="foto-preview" src="{% static 'img/default.png' %}"
                                width="160" height="160"
-                               style="border-radius:50%; object-fit:cover;
+                               style="object-fit:cover;
                                       border:3px solid #adb5bd;
                                       box-shadow:0 3px 12px rgba(0,0,0,.12);
                                       transition:filter .2s;">
@@ -147,7 +146,7 @@
                       {% if contact %}
                         <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-edit"></i> Edita</a>
                       {% else %}
-                        <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-plus"></i> Aumenta</a>
+                        <a href="{% url 'add-contact' obj.hashed %}" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-plus"></i> Aumenta</a>
                       {% endif %}
                     </th>
                   </tr>
@@ -185,7 +184,7 @@
                       {% if position %}
                         <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-edit"></i> Edita</a>
                       {% else %}
-                        <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-plus"></i> Aumenta</a>
+                        <a href="{% url 'add-position' obj.hashed %}" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-plus"></i> Aumenta</a>
                       {% endif %}
                     </th>
                   </tr>
@@ -200,7 +199,7 @@
                   <tr>
                     <th colspan="2" style="background:#1a3a5c; color:#fff; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; padding:.35rem .75rem;">
                       <i class="fas fa-graduation-cap me-1"></i>Edukasaun Formál
-                      <a href="" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-plus"></i> Aumenta</a>
+                      <a href="{% url 'add-edus' obj.hashed %}" style="float:right; color:rgba(255,255,255,.8); font-size:.76rem; text-decoration:none;"><i class="fas fa-plus"></i> Aumenta</a>
                     </th>
                   </tr>
                   {% if formaleducations %}
@@ -219,7 +218,7 @@
                               {% if edu.graduation_year %}<span><i class="fas fa-calendar me-1"></i>{{ edu.graduation_year|date:"Y" }}</span>{% endif %}
                             </div>
                             {% if edu.area %}<div style="font-size:.79rem; color:#2563a8;"><i class="fas fa-tag me-1"></i>{{ edu.area }}</div>{% endif %}
-                            {% if edu.summary %}<div style="font-size:.79rem; color:#64748b; margin-top:.25rem; border-top:1px solid #e2e8f0; padding-top:.25rem;">{{ edu.summary }}</div>{% endif %}
+                            {% if edu.summary %}<div style="font-size:.79rem; color:#64748b; margin-top:.25rem; border-top:1px solid #e2e8f0; padding-top:.25rem;">{{ edu.summary|safe }}</div>{% endif %}
                           </div>
                           <div class="d-flex gap-1 ms-2">
                             {% if edu.file %}
@@ -227,7 +226,7 @@
                               <i class="fas fa-file-pdf"></i>
                             </a>
                             {% endif %}
-                            <a href="{% url 'education-update' edu.id %}" class="btn btn-sm btn-outline-secondary" style="font-size:.72rem; padding:.15rem .45rem;" title="Edita">
+                            <a href="" class="btn btn-sm btn-outline-secondary" style="font-size:.72rem; padding:.15rem .45rem;" title="Edita">
                               <i class="fas fa-edit"></i>
                             </a>
                           </div>
@@ -277,7 +276,7 @@
 
 {% endblock %}
 
-{% block scripts %}
+{% block skrip %}
 <script>
   // Hover effect foto
   const wrap = document.querySelector('[onclick*="photo-file"]');
@@ -295,12 +294,14 @@
 
   function uploadFoto(input) {
     if (!input.files || !input.files[0]) return;
-    // preview dulu
+
+    // Preview dulu
     const reader = new FileReader();
     reader.onload = e => document.getElementById('foto-preview').src = e.target.result;
     reader.readAsDataURL(input.files[0]);
-    // submit setelah preview tampil
-    setTimeout(() => document.getElementById('photo-form').submit(), 350);
+
+    // Submit langsung tanpa setTimeout
+    document.getElementById('photo-form').submit();
   }
 </script>
 {% endblock %}

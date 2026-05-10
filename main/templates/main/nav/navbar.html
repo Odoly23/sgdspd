@@ -2,8 +2,8 @@
 <div class="topbar">
   <div class="container">
     <div class="tb-left">
-      <span><i class="fa-solid fa-phone fa-xs mr-1"></i> +670 777 12345</span>
-      <span class="d-none d-sm-inline"><i class="fa-solid fa-envelope fa-xs mr-1"></i> pd@email.tl</span>
+      <span><i class="fa-solid fa-phone fa-xs mr-1"></i> +670 77230028 / 77045042</span>
+      <span class="d-none d-sm-inline"><i class="fa-solid fa-envelope fa-xs mr-1"></i> info@partidodemocrativo.tl</span>
     </div>
     <div class="tb-right">
       <span><i class="fa-solid fa-location-dot fa-xs mr-1"></i> Dili</span>
@@ -33,6 +33,26 @@
         {% else %}
         {% endif %}
     {% endif %}
+          <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false"
+           style="display:flex;align-items:center;gap:8px;">
+          <div class="av"><i class="fa-solid fa-user fa-xs"></i></div>
+          <span>{{request.user.username|upper}}</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="{% url 'my-profile' %}"><i class="fa-solid fa-circle-user text-dark"></i> Profile</a>
+          <a class="dropdown-item" href="{% url 'user-account' %}"><i class="fa-solid fa-gear text-dark"></i> Minha Conta</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Mobile hamburger -->
+    <button class="btn-ham" id="menuToggle" aria-label="Buka menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
   </div>
 </nav>
 

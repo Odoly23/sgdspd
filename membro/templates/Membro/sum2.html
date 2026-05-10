@@ -1,46 +1,43 @@
 {% extends 'main/layout.html' %}
 {% load static %}
 {% block content %}
-  <div class="card  border-0  mb-3">
+  <div class="card border-0 mb-3">
+    <div class="card-header">
+      <h5 class="mb-0">{{ title }}</h5>
+    </div>
     <div class="card-body">
-                   <table class="table table-sm" id="example2" cellspacing="0" width="100%">
-                  <thead class="table-light text-center">
-                    <tr>
-                      <th>SUKU</th>
-                      <th>ALDEIA</th>
-                      <th>POZISAUN</th>
-                      <th>MEMBRO</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-
-                    {% for item in data %}
-                      {% for row in item.rows %}
-                        <tr>
-                          {% if forloop.parentloop.first and forloop.first %}
-                            <td rowspan="{{ total_rows }}" class="align-middle text-center">
-                              {{ village.name }}
-                            </td>
-                          {% endif %}
-                          {% if forloop.first %}
-                            <td rowspan="{{ item.rowspan }}" class="align-middle text-center">
-                              {{ item.aldeia }}
-                            </td>
-                          {% endif %}
-
-                          <td class="text-center mb-0 ">{{ row.position }}</td>
-                          <td class="text-center mb-0 ">{{ row.name }}</td>
-
-                        </tr>
-
-                      {% endfor %}
-
-                    {% endfor %}
-
-                  </tbody>
-
-                </table>
+      {% if data %}
+        <table class="table table-sm" id="example2" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th class="text-center">SUKU</th>
+              <th class="text-center">ALDEIA</th>
+              <th>POZISAUN</th>
+              <th>COMPAINEIRO</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in data %}
+              {% for row in item.rows %}
+                <tr>
+                  {% if forloop.parentloop.first and forloop.first %}
+                    <td rowspan="{{ total_rows }}" class="align-middle text-center">
+                      {{ village.name }}
+                    </td>
+                  {% endif %}
+                  {% if forloop.first %}
+                    <td rowspan="{{ item.rowspan }}" class="align-middle text-center">
+                      {{ item.aldeia }}
+                    </td>
+                  {% endif %}
+                  <td>{{ row.position }}</td>
+                  <td>{{ row.name }}</td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

@@ -1,0 +1,22 @@
+{% extends "main/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid"><br/>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="card shadow-lg pt-1 border-primary rounded">
+				<div class="card-header bg-steel">{{ legend|upper }}</div>
+				<div class="card-body">
+					<table class="table table-sm">
+						<tr><th>Naran</th><th>Sexu</th><th>Fatin & Data Moris</th></tr>
+						<tr><td>{{ emp }}</td><td>{{ emp.sex }}</td><td>{{ emp.pob }}, {{ emp.dob|date:"d/m/Y" }}</td></tr>
+					</table>
+					{% crispy form %}
+				</div> <!--end card-body-->
+			</div> <!--end card-->
+		</div> <!--end col-->
+	</div> <!--end row-->
+</div><!--end container-->
+{% endblock %}
+{% block scripts %}
+{% endblock %}

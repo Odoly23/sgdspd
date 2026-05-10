@@ -1,0 +1,217 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+
+  <!-- ── Kartu Statistik ── -->
+  <div class="row mb-3 text-center">
+    {% for label, val, color in summary_cards %}
+    <div class="col-6 col-md-2 mb-2">
+      <div class="card border-0 shadow-sm py-2">
+        <div class="text-muted" style="font-size:.72rem;">{{ label }}</div>
+        <h5 class="mb-0" style="color:{{ color }};">
+          {% if label == "Total Membro" %}{{ total_all }}
+          {% elif label == "Mane" %}{{ total_mane }}
+          {% elif label == "Feto" %}{{ total_feto }}
+          {% elif label == "Ativu" %}{{ total_ativu }}
+          {% elif label == "La Ativu" %}{{ total_la_ativu }}
+          {% endif %}
+        </h5>
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Kartu manual karena tidak pakai loop di view -->
+    <div class="col-6 col-md-2 mb-2">
+      <div class="card border-0 shadow-sm py-2">
+        <div class="text-muted" style="font-size:.72rem;">Total Membro</div>
+        <h5 class="mb-0 text-primary">{{ total_all }}</h5>
+      </div>
+    </div>
+    <div class="col-6 col-md-2 mb-2">
+      <div class="card border-0 shadow-sm py-2">
+        <div class="text-muted" style="font-size:.72rem;">Mane</div>
+        <h5 class="mb-0 text-info">{{ total_mane }}</h5>
+      </div>
+    </div>
+    <div class="col-6 col-md-2 mb-2">
+      <div class="card border-0 shadow-sm py-2">
+        <div class="text-muted" style="font-size:.72rem;">Feto</div>
+        <h5 class="mb-0" style="color:#e91e8c;">{{ total_feto }}</h5>
+      </div>
+    </div>
+    <div class="col-6 col-md-2 mb-2">
+      <div class="card border-0 shadow-sm py-2">
+        <div class="text-muted" style="font-size:.72rem;">Ativu</div>
+        <h5 class="mb-0 text-success">{{ total_ativu }}</h5>
+      </div>
+    </div>
+    <div class="col-6 col-md-2 mb-2">
+      <div class="card border-0 shadow-sm py-2">
+        <div class="text-muted" style="font-size:.72rem;">La Ativu</div>
+        <h5 class="mb-0 text-danger">{{ total_la_ativu }}</h5>
+      </div>
+    </div>
+    <div class="col-6 col-md-2 mb-2">
+      <div class="card border-0 shadow-sm py-2">
+        <div class="text-muted" style="font-size:.72rem;">Lokasaun</div>
+        <h6 class="mb-0 text-secondary" style="font-size:.72rem;">{{ nama_lokasi }}</h6>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tabel Utama ── -->
+  <div class="card shadow-sm border-0">
+    <div class="card-header d-flex justify-content-between align-items-center"
+         style="background:#1a3a5c; color:#fff; font-size:.82rem;">
+      <span><i class="fas fa-users me-1"></i><strong>{{ nama_lokasi }}</strong></span>
+
+      <!-- Tombol Export -->
+      <div class="d-flex gap-1">
+        <!-- Export halaman aktif -->
+        <div class="dropdown">
+          <button class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown"
+                  style="font-size:.72rem;">
+            <i class="fas fa-file-export"></i> Halaman Ida Ne'e
+          </button>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item"
+               href="?export=excel&scope=page&page={{ page_obj.number }}" style="font-size:.8rem;">
+              <i class="fas fa-file-excel text-success"></i> Excel
+            </a>
+            <a class="dropdown-item"
+               href="?export=pdf&scope=page&page={{ page_obj.number }}" style="font-size:.8rem;">
+              <i class="fas fa-file-pdf text-danger"></i> PDF
+            </a>
+          </div>
+        </div>
+
+        <!-- Export semua data -->
+        <div class="dropdown">
+          <button class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown"
+                  style="font-size:.72rem;">
+            <i class="fas fa-download"></i> Hotu
+          </button>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="?export=excel&scope=all" style="font-size:.8rem;">
+              <i class="fas fa-file-excel text-success"></i> Excel — Hotu
+            </a>
+            <a class="dropdown-item" href="?export=pdf&scope=all" style="font-size:.8rem;">
+              <i class="fas fa-file-pdf text-danger"></i> PDF — Hotu
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body p-2">
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover mb-0" style="font-size:.78rem;">
+          <thead style="background:#1a3a5c; color:#fff; text-align:center;">
+            <tr>
+              <th rowspan="2" style="vertical-align:middle;">#</th>
+              <th rowspan="2" style="vertical-align:middle; text-align:left;">
+                {% if group == 'postu' or group == 'admin' or group == 'staff' %}Suku{% else %}Aldeia{% endif %}
+              </th>
+              <th colspan="4">Membru</th>
+              <th colspan="6">Pozisaun</th>
+            </tr>
+            <tr style="background:#2563a8;">
+              <th>Mane</th><th>Feto</th><th>Ativu</th><th>La Ativu</th>
+              <th>Kord.</th><th>Sek.</th><th>Mem.</th>
+              <th>OJD</th><th>MPD</th><th>OPD</th>
+            </tr>
+          </thead>
+          <tbody style="text-align:center;">
+            {% for obj in objects1 %}
+            {% with num=forloop.counter0|add:page_obj.start_index %}
+            <tr>
+              <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+              <td class="text-start"><strong>{{ obj.nama }}</strong></td>
+              <td>
+                <a href="{% url 'lista-membru' 'mane' obj.id %}" class="text-info">{{ obj.male }}</a>
+              </td>
+              <td>
+                <a href="{% url 'lista-membru' 'feto' obj.id %}" style="color:#e91e8c;">{{ obj.female }}</a>
+              </td>
+              <td>
+                <a href="{% url 'lista-membru' 'total' obj.id %}">
+                  <span class="badge bg-success">{{ obj.ativu }}</span>
+                </a>
+              </td>
+              <td>
+                <a href="{% url 'lista-membru' 'la_ativu' obj.id %}">
+                  <span class="badge bg-danger">{{ obj.la_ativu }}</span>
+                </a>
+              </td>
+              <td>{{ obj.kord }}</td>
+              <td>{{ obj.sek }}</td>
+              <td>{{ obj.mem }}</td>
+              <td>{{ obj.ojd }}</td>
+              <td>{{ obj.mpd }}</td>
+              <td>{{ obj.opd }}</td>
+            </tr>
+            {% endwith %}
+            {% empty %}
+            <tr>
+              <td colspan="12" class="text-muted text-center py-3"><em>Dadus la iha.</em></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+          <!-- Grand Total -->
+          {% if objects1 %}
+          <tfoot style="background:#dbeafe; font-weight:bold; text-align:center; font-size:.8rem;">
+            <tr>
+              <td colspan="2" class="text-end"><strong>TOTAL HOTU</strong></td>
+              <td class="text-info"><strong>{{ total_mane }}</strong></td>
+              <td style="color:#e91e8c;"><strong>{{ total_feto }}</strong></td>
+              <td><span class="badge bg-success">{{ total_ativu }}</span></td>
+              <td><span class="badge bg-danger">{{ total_la_ativu }}</span></td>
+              <td>{{ total_kord }}</td><td>{{ total_sek }}</td><td>{{ total_mem }}</td>
+              <td>{{ total_ojd }}</td><td>{{ total_mpd }}</td><td>{{ total_opd }}</td>
+            </tr>
+          </tfoot>
+          {% endif %}
+        </table>
+      </div>
+
+      <!-- ── Paginator ── -->
+      {% if page_obj.has_other_pages %}
+      <nav class="mt-3">
+        <ul class="pagination pagination-sm justify-content-center mb-0">
+          {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+          </li>
+          {% endif %}
+
+          {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+              <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+          </li>
+          {% endif %}
+        </ul>
+        <div class="text-center text-muted mt-1" style="font-size:.72rem;">
+          Haree {{ page_obj.start_index }}–{{ page_obj.end_index }} husi {{ page_obj.paginator.count }} rekord
+        </div>
+      </nav>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

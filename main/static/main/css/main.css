@@ -1,0 +1,43 @@
+body {
+  background: #fafafa;
+  color: #333333;
+  margin-top: 5rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
+}
+
+.bg-steel {
+  background-color: #17a2b8 !important;
+  color:white;
+}
+
+.site-header .navbar-nav{
+  color: #cbd5db;
+}
+.site-header .navbar-nav .nav-link {
+  color: #cbd5db;
+  padding-right: .5rem !important;
+  padding-left: .5rem !important;
+}
+
+.site-header .navbar-nav .nav-link:hover {
+  color: #ffffff;
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 500;
+}
+   
+/* Fixes dropdown menus placed on the right side */
+.ml-auto .dropdown-menu {
+  left: auto !important;
+  right: 0px;
+}
+.btn-group.special {
+  display: flex;
+}
+.special .btn {
+  flex: 1
+}

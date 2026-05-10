@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.conf.urls import handler404, handler500
 from main.views import logout_view, loginPage
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,7 +32,14 @@ urlpatterns = [
     path('custom/', include('custom.urls')),
     path('summernote/', include('django_summernote.urls')),
     path('API/Report/', include('report.Api.urls')),
-    path('Utilizadores/', include('user.urls'))
+    path('API/Membru/', include('membro.Api.urls')),
+    path('Utilizadores/', include('user.urls')),
+    path('Sumario/', include('report.urls')),
+    path('reset-password/', auth_views.PasswordResetView.as_view( template_name='auth/password_reset.html', email_template_name='registration/password_reset_email.html'),name='password_reset'),
+    path('reset-password-sent/', auth_views.PasswordResetDoneView.as_view(template_name='auth/password_reset_done.html'),name='password_reset_done'),
+    path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='auth/password_reset_confirm.html'),name='password_reset_confirm'),
+    path('reset-password-complete/',auth_views.PasswordResetCompleteView.as_view(template_name='auth/password_reset_complete.html'),name='password_reset_complete'),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

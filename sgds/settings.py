@@ -39,12 +39,19 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    #my middleware
+    'sgds.middleware.XFrameOptionsMiddleware',
+    'sgds.middleware.PreviousURLMiddleware',
+    'sgds.middleware.NoBackAfterLogout',
+    'sgds.middleware.PreventDuplicatePostMiddleware',
 
 
 ]
@@ -113,6 +120,7 @@ SESSION_COOKIE_AGE = 60 * 60
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -148,12 +156,15 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
+# EMAIL CONFIG
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASS')
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

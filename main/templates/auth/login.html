@@ -2,96 +2,303 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - Sistema</title>
 
-<!-- Bootstrap 4 -->
+<title>Login - Sistema</title>
+<link rel="icon" href="{% static 'Images/images.png' %}">
+<!-- Bootstrap -->
 <link rel="stylesheet" href="{% static 'css/bootstrap/css/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap/css/all.min.css' %}">
 <link rel="stylesheet" href="{% static 'webfonts/css/all.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/logins.css' %}">
+
+<style>
+
+body{
+    background:#f4f6f9;
+    font-family:'Segoe UI', sans-serif;
+}
+
+/* wrapper */
+.login-wrapper{
+    min-height:100vh;
+    padding:20px;
+}
+
+/* card */
+.login-card{
+    width:100%;
+    max-width:400px;
+    border-radius:18px;
+    overflow:hidden;
+    background:#fff;
+}
+
+/* logo */
+.login-logo{
+    height:75px;
+    object-fit:contain;
+}
+
+/* input */
+.input-group-text{
+    background:#fff;
+    border-right:none;
+}
+
+.form-control{
+    border-left:none;
+    height:46px;
+}
+
+.form-control:focus{
+    box-shadow:none;
+    border-color:#ced4da;
+}
+
+/* password toggle */
+.password-toggle{
+    cursor:pointer;
+    background:#fff;
+    border-left:none;
+}
+
+/* button */
+.btn-login{
+    height:46px;
+    border-radius:10px;
+    font-weight:600;
+}
+
+/* remember */
+.remember-check{
+    transform:scale(1.1);
+}
+
+/* footer */
+.login-footer{
+    font-size:12px;
+    color:#777;
+}
+
+/* mobile */
+@media(max-width:576px){
+
+    .login-card{
+        border-radius:14px;
+    }
+
+    .card-body{
+        padding:20px !important;
+    }
+
+}
+
+</style>
 
 </head>
-<body class="bg-light">
 
-<div class="login-wrapper d-flex align-items-center justify-content-center" style="min-height:100vh;">
+<body>
 
-    <div class="card login-card p-4 border-0 shadow-sm" style="width:380px; border-radius:12px;">
+<div class="login-wrapper d-flex align-items-center justify-content-center">
 
-        <div class="card-body text-center">
+    <div class="card login-card border-0 shadow">
 
-            <!-- MESSAGES -->
+        <div class="card-body p-4">
+
+            <!-- messages -->
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show small" role="alert">
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show small">
                         {{ message }}
-                        <button type="button" class="close" data-dismiss="alert">
+
+                        <button type="button"
+                                class="close"
+                                data-dismiss="alert">
+
                             <span>&times;</span>
+
                         </button>
                     </div>
                 {% endfor %}
             {% endif %}
 
-            <!-- LOGO -->
-            <img src="{% static 'Images/images.png' %}" style="height:70px;" class="mb-3">
+            <!-- logo -->
+            <div class="text-center mb-3">
 
-            <h5 class="font-weight-bold text-dark">Partido Democrático</h5>
-            <small class="text-muted d-block mb-3">Sistema Login Access</small>
+                <img src="{% static 'Images/images.png' %}"
+                     class="login-logo mb-2">
+
+                <h4 class="font-weight-bold text-dark mb-1">
+                    Partido Democrático
+                </h4>
+
+                <small class="text-muted">
+                    Sistema Login Access
+                </small>
+
+            </div>
 
             <hr>
 
-            <!-- FORM -->
+            <!-- form -->
             <form method="POST">
+
                 {% csrf_token %}
 
-                <!-- USERNAME -->
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="fas fa-user"></i>
-                        </span>
+                <!-- username -->
+                <div class="form-group">
+
+                    <label class="small font-weight-bold">
+                        Username
+                    </label>
+
+                    <div class="input-group">
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+
+                        <input type="text"
+                               name="username"
+                               class="form-control"
+                               placeholder="Enter username"
+                               required>
+
                     </div>
-                    <input type="text" name="username" class="form-control" placeholder="Username" required>
+
                 </div>
 
-                <!-- PASSWORD -->
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="fas fa-lock"></i>
-                        </span>
+                <!-- password -->
+                <div class="form-group">
+
+                    <label class="small font-weight-bold">
+                        Password
+                    </label>
+
+                    <div class="input-group">
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                        </div>
+
+                        <input type="password"
+                               name="password"
+                               id="password"
+                               class="form-control"
+                               placeholder="Enter password"
+                               required>
+
+                        <div class="input-group-append">
+
+                            <span class="input-group-text password-toggle"
+                                  onclick="togglePassword()">
+
+                                <i class="fas fa-eye"
+                                   id="toggleIcon"></i>
+
+                            </span>
+
+                        </div>
+
                     </div>
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+
                 </div>
 
-                <!-- OPTIONS -->
-                <div class="d-flex justify-content-between mb-3">
+                <!-- remember + forgot -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
                     <div>
-                        <input type="checkbox"> <small>Remember</small>
+
+                        <input type="checkbox"
+                               name="remember"
+                               class="remember-check">
+
+                        <small class="text-muted">
+                            Remember me
+                        </small>
+
                     </div>
-                    <a href="#" class="text-primary small">Haluha password?</a>
+
+                    <!-- reset password -->
+                    <a href="{% url 'password_reset' %}"
+                       class="small text-primary">
+
+                        Haluha password?
+
+                    </a>
+
                 </div>
 
-                <!-- BUTTON -->
-                <button type="submit" class="btn btn-primary btn-block">
-                    Login <i class="fa fa-sign-in-alt"></i>
+                <!-- button -->
+                <button type="submit"
+                        class="btn btn-primary btn-block btn-login">
+
+                    Login
+                    <i class="fa fa-sign-in-alt ml-1"></i>
+
                 </button>
 
             </form>
 
             <hr>
 
-            <!-- FOOTER -->
-            <small class="text-muted">
-                © 2026 - {% now "Y" %} <br>
+            <!-- footer -->
+            <div class="text-center login-footer">
+
+                © 2026 - {% now "Y" %}
+
+                <br>
+
                 Developed by Sec-IT-PADA
-            </small>
+
+            </div>
 
         </div>
+
     </div>
 
 </div>
+
+<!-- JS -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'css/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<script>
+
+// show hide password
+function togglePassword(){
+
+    const password = document.getElementById('password');
+
+    const icon = document.getElementById('toggleIcon');
+
+    if(password.type === 'password'){
+
+        password.type = 'text';
+
+        icon.classList.remove('fa-eye');
+
+        icon.classList.add('fa-eye-slash');
+
+    }else{
+
+        password.type = 'password';
+
+        icon.classList.remove('fa-eye-slash');
+
+        icon.classList.add('fa-eye');
+
+    }
+
+}
+
+</script>
 
 </body>
 </html>

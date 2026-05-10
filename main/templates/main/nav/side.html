@@ -17,8 +17,8 @@
     <hr>
     <div class="sb-sec">Conta-{{user.request.username|upper}}</div>
     <ul>
-      <li><a href="#"><i class="fa-solid fa-circle-user"></i>Profile</a></li>
-      <li><a href="#"><i class="fa-solid fa-sliders"></i>Conta</a></li>
+      <li><a href="{% url 'my-profile' %}"><i class="fa-solid fa-circle-user"></i>Profile</a></li>
+      <li><a href="{% url 'user-account' %}"><i class="fa-solid fa-sliders"></i>Conta</a></li>
       <li>
         <a href="{% url 'logout' %}" style="color:rgba(255,120,120,.85);">
           <i class="fa-solid fa-right-from-bracket" style="color:rgba(255,90,90,.7);"></i>Logout

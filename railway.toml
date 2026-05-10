@@ -1,0 +1,6 @@
+[build]
+buildCommand = "chmod +x build.sh && ./build.sh"
+
+[deploy]
+startCommand = "gunicorn sgds.wsgi:application"
+restartPolicyType = "ON_FAILURE"

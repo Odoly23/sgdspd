@@ -1,0 +1,39 @@
+{% extends "main/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+	<div class="row">
+		<div class="col-xl-6 col-md-6 mt-2">
+			<div class="card shadow-lg pt-1 rounded">
+				<div class="card-header">ACCOUNT INFO</div>
+				<div class="card-body">
+					<table class="table table-sm">
+						<tr>
+							<td>USERNAME</td>
+							<td>: {{ user.username }}</td>
+						</tr>
+						<tr>
+							<td>EMAIL</td>
+							<td>: {{ user.email }}</td>
+						</tr>
+					</table>
+				</div>
+				<div class="card-footer">
+					<div class="small"><a href="{% url 'user-change-password' %}">Troka password!</a></div>
+				</div>
+			</div>
+		</div> <!--end card-md-6-->
+		<div class="col-xl-6 col-md-6">
+			<div class="card shadow-lg pt-1 rounded">
+				<div class="card-header">UPDATE ACCOUNT</div>
+				<div class="card-body">
+					<fieldset class="form-group">
+						{% crispy form %}
+					</fieldset>
+					<hr/>
+					<div class="alert alert-warning">Favor Prense ita nia email nee valido no ativado atu bele reset ita nia password</div>
+				</div>
+			</div>
+		</div> <!--end card-md-6-->
+	</div> <!--end row-->
+</div>
+{% endblock content %}

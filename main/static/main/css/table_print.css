@@ -1,0 +1,25 @@
+body{
+  margin: 20px;
+  /* margin-right: 20px; */
+}
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
+}
+
+.bg-steel {
+  background-color: #5f788a;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th { 
+  padding: 4px;
+  padding-bottom: 0;
+  background-color: #adc2eb;
+}
+td { 
+  padding: 3px;
+  padding-bottom: 0;
+}

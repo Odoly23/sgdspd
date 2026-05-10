@@ -1,15 +1,17 @@
 import json
 import hashlib
 import uuid
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+from django.contrib import messages
 from django.db import transaction
-from membro.models import Membru, MembroUser, MembroPosition
-
+from membro.models import Membru, MembroUser, MembroPosition, Photo, ContactInfo, LocationTL, FormalEducation
+from config.auth_utils import c_user_mem
+from user.forms import UserForm, ChangePasswordForm
 
 ESTRUTURA_GROUP_MAP = {
     'AL': 'ald',
@@ -193,3 +195,67 @@ def api_change_username(request, membro_id: int):
 def api_preview_username(request, membro_id: int):
     membro = get_object_or_404(Membru, pk=membro_id)
     return JsonResponse({'username': _build_username(membro)})
+
+
+
+@login_required
+def my_profile(request):
+    group = request.user.groups.all()[0].name
+    user_mem = c_user_mem(request.user)
+    
+    if not user_mem:
+        messages.warning(request, 'Profil la iha dadus membro.')
+        return redirect('g-dash')
+    
+    obj = user_mem
+    photo = Photo.objects.filter(membro=obj).first()
+    contact = ContactInfo.objects.filter(membro=obj).first()
+    location = LocationTL.objects.select_related(
+        'municipality', 'administrativepost', 'village', 'aldeia'
+    ).filter(membro=obj).first()
+    position = MembroPosition.objects.select_related(
+        'estructure', 'position'
+    ).filter(membro=obj).first()
+    formaleducations = FormalEducation.objects.filter(membro=obj, is_active=True)
+    membrouser = MembroUser.objects.select_related('user').filter(membro=obj).first()
+
+    context = {
+        'title': f'Profil - {obj.name}',
+        'legend': f'Profil - {obj.name}',
+        'obj': obj,
+        'photo': photo,
+        'contact': contact,
+        'location': location,
+        'position': position,
+        'formaleducations': formaleducations,
+        'membrouser': membrouser,
+        'group': group,
+    }
+    return render(request, 'users/profile.html', context)
+
+@login_required
+def AccountUpdate(request):
+    group = request.user.groups.all()[0].name
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Ita nia konta atualiza ona!')
+            return redirect('user-account')
+    else: form = UserForm(instance=request.user)
+    context = {
+        'group':group, 'form':form,
+        'title':'Conta', 'legend':'Conta',
+    }
+    return render(request, 'auths/account.html', context)
+
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordChangeView, PasswordResetDoneView
+
+class UserPasswordChangeView(PasswordChangeView):
+    form_class = ChangePasswordForm
+    template_name = 'auths/change_password.html'
+    success_url = reverse_lazy('user-change-password-done')
+
+class UserPasswordChangeDoneView(PasswordResetDoneView):
+    template_name = 'auths/change_password_done.html'

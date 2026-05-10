@@ -114,7 +114,7 @@ class Photo(BaseModel):
 class FormalEducation(BaseModel):
 	membro = models.ForeignKey(Membru, on_delete=models.CASCADE, related_name="formaleducation")
 	educationlevel = models.ForeignKey(EducationLevel, on_delete=models.CASCADE, related_name="formaleducation", verbose_name="Nivel Edukasaun")
-	university = models.ForeignKey(University, null=True, blank=True, on_delete=models.CASCADE, related_name="formaleducation", verbose_name="Universidade/Entidade")
+	university = models.CharField(max_length=200, null=True, blank=True, verbose_name="Universidade/Entidade")
 	faculty = models.CharField(max_length=100, null=True, blank=True, verbose_name="Faculdade")
 	studyprogram = models.CharField(max_length=100, null=True, blank=True, verbose_name="Programa Estudu/Curso")
 	area =  models.CharField(max_length=200, null=True, blank=True, verbose_name="Area Professional")

@@ -1,0 +1,50 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card border-0">
+        <div class="card-header">
+          <strong><i class="fa-solid fa-chart-bar me-1"></i>{{ legend }}</strong>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <a href="{% url 'report-geral' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm h-100 text-center p-4">
+                  <i class="fa-solid fa-users fa-2x mb-3 text-primary"></i>
+                  <h6 class="fw-bold">Relatoriu Geral</h6>
+                  <small class="text-muted">Total membro mane no feto per suku/aldeia</small>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-md-6">
+              <a href="{% url 'report-posisaun' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm h-100 text-center p-4">
+                  <i class="fa-solid fa-sitemap fa-2x mb-3 text-success"></i>
+                  <h6 class="fw-bold">Relatoriu Posisaun</h6>
+                  <small class="text-muted">Total membro bazeia ba posisaun</small>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-md-6">
+              <a href="{% url 'report-status' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm h-100 text-center p-4">
+                  <i class="fa-solid fa-circle-check fa-2x mb-3 text-warning"></i>
+                  <h6 class="fw-bold">Relatoriu Status</h6>
+                  <small class="text-muted">Total membro ativu no la ativu</small>
+                </div>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

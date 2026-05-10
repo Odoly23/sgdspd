@@ -263,12 +263,144 @@
 /* Spinner */
 .mu-spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: mu-spin .6s linear infinite; }
 @keyframes mu-spin { to { transform: rotate(360deg); } }
+/* ═════════════════════════════
+   MOBILE RESPONSIVE
+═════════════════════════════ */
+@media (max-width: 768px) {
+
+  .mu-wrap{
+    padding: 14px;
+  }
+
+  .mu-header{
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mu-title{
+    font-size: 18px;
+  }
+
+  .mu-sub{
+    font-size: 12px;
+  }
+
+  /* table scroll horizontal */
+  .mu-table-wrap{
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mu-table{
+    min-width: 760px;
+  }
+
+  .mu-table th,
+  .mu-table td{
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .mu-name{
+    min-width: 180px;
+  }
+
+  .mu-pos{
+    min-width: 120px;
+  }
+
+  .mu-actions{
+    min-width: 150px;
+  }
+
+  .mu-btn{
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .mu-avatar{
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+
+  /* modal responsive */
+  .mu-modal{
+    width: calc(100% - 20px);
+    margin: 10px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .mu-modal-body{
+    padding: 16px;
+  }
+
+  .mu-modal-head{
+    padding: 16px 16px 0;
+  }
+
+  .mu-modal-foot{
+    flex-direction: column;
+  }
+
+  .mu-modal-foot .mu-btn{
+    width: 100%;
+    justify-content: center;
+  }
+
+}
 </style>
 
 <!-- ═══════════════════════════════════════════════════
      SCRIPTS
 ═══════════════════════════════════════════════════ -->
+
 <script>
+$(document).ready(function () {
+
+    // Hilangkan search custom lama karena DataTable sudah punya search
+    $('.mu-search-wrap').hide();
+
+    $('#mu-table').DataTable({
+
+        responsive: true,
+        autoWidth: false,
+        scrollX: true,
+
+        pageLength: 10,
+
+        lengthMenu: [
+            [10, 25, 50, 100],
+            [10, 25, 50, 100]
+        ],
+
+        ordering: true,
+        searching: true,
+        paging: true,
+        info: true,
+
+        columnDefs: [
+            { orderable: false, targets: 4 } // kolom aksi tidak bisa sort
+        ],
+
+        language: {
+            search: "Buka :",
+            lengthMenu: "Hatudu _MENU_ dados",
+            info: "Hatudu _START_ - _END_ husi _TOTAL_ dados",
+            infoEmpty: "Dadus mamuk",
+            zeroRecords: "Dadus la iha",
+            paginate: {
+                previous: "←",
+                next: "→"
+            }
+        }
+
+    });
+
+});
+
+
 // ── Serialize groups from Django to JS ──
 const ALL_GROUPS = {{ groups_json|safe }};
 
@@ -278,131 +410,328 @@ let currentEstrutCode = null;
 
 // ── Open modal ──
 function openCreateModal(membroId, membroName, estrutCode) {
+
   currentMembroId   = membroId;
   currentEstrutCode = estrutCode;
 
   // Fill membro chip
-  document.getElementById('mu-modal-avatar').textContent  = membroName[0].toUpperCase();
-  document.getElementById('mu-modal-membro-name').textContent = membroName;
-  document.getElementById('mu-modal-membro-sub').textContent  =
-    estrutCode ? `Estrutura: ${estrutCode}` : 'Estrutura la definidu';
+  document.getElementById('mu-modal-avatar').textContent =
+      membroName[0].toUpperCase();
 
-  // Auto-fill username (fetch preview)
+  document.getElementById('mu-modal-membro-name').textContent =
+      membroName;
+
+  document.getElementById('mu-modal-membro-sub').textContent =
+      estrutCode
+      ? `Estrutura: ${estrutCode}`
+      : 'Estrutura la definidu';
+
+  // Auto username
   fetch(`/Utilizadores/membro/users/${membroId}/api/preview/`)
     .then(r => r.json())
-    .then(d => { document.getElementById('mu-username').value = d.username; })
+    .then(d => {
+        document.getElementById('mu-username').value = d.username;
+    })
     .catch(() => {});
 
-  // Fill group options — show all groups; pre-select based on estrutura
-  const groupMap = { AL: 'ald', SK: 'suku', PA: 'postu', MN: 'staff' };
+  // Groups
+  const groupMap = {
+      AL: 'ald',
+      SK: 'suku',
+      PA: 'postu',
+      MN: 'staff'
+  };
+
   const suggested = groupMap[estrutCode] || '';
+
   const sel = document.getElementById('mu-group');
+
   sel.innerHTML = '<option value="">-- Hili Grupu --</option>';
+
   ALL_GROUPS.forEach(g => {
+
     const opt = document.createElement('option');
+
     opt.value = g.id;
     opt.textContent = g.name;
-    if (g.name === suggested) opt.selected = true;
+
+    if (g.name === suggested) {
+        opt.selected = true;
+    }
+
     sel.appendChild(opt);
+
   });
 
-  // Reset error
+  // reset error
   const errEl = document.getElementById('mu-error');
+
   errEl.hidden = true;
   errEl.textContent = '';
 
-  // Open overlay
+  // open modal
   document.getElementById('mu-modal').classList.add('open');
-  document.getElementById('mu-modal').removeAttribute('aria-hidden');
+
+  document.getElementById('mu-modal')
+      .removeAttribute('aria-hidden');
+
   document.getElementById('mu-username').focus();
 }
 
+
 // ── Close modal ──
 function closeModal() {
-  document.getElementById('mu-modal').classList.remove('open');
-  document.getElementById('mu-modal').setAttribute('aria-hidden', 'true');
+
+  document.getElementById('mu-modal')
+      .classList.remove('open');
+
+  document.getElementById('mu-modal')
+      .setAttribute('aria-hidden', 'true');
+
   document.getElementById('mu-create-form').reset();
 }
 
-// Close on overlay click
-document.getElementById('mu-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
 
-// ── Submit create user ──
-document.getElementById('mu-create-form').addEventListener('submit', async function(e) {
-  e.preventDefault();
+// close when click outside
+document.getElementById('mu-modal')
+.addEventListener('click', function(e) {
 
-  const username = document.getElementById('mu-username').value.trim();
-  const groupId  = document.getElementById('mu-group').value;
-  const errEl    = document.getElementById('mu-error');
-  const submitBtn    = document.getElementById('mu-submit');
-  const submitLabel  = document.getElementById('mu-submit-label');
-  const submitSpinner = document.getElementById('mu-submit-spinner');
-
-  errEl.hidden = true;
-  submitBtn.disabled = true;
-  submitLabel.textContent = 'Prosesu…';
-  submitSpinner.hidden = false;
-
-  try {
-    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    const res  = await fetch(`/Utilizadores/membro/users/${currentMembroId}/api/create/`, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
-      body:    JSON.stringify({ username, group_id: groupId ? parseInt(groupId) : null }),
-    });
-    const data = await res.json();
-
-    if (data.ok) {
-      closeModal();
-      // Update row in table without full reload
-      updateRowAfterCreate(currentMembroId, data.username);
-    } else {
-      errEl.textContent = data.error;
-      errEl.hidden = false;
+    if (e.target === this) {
+        closeModal();
     }
-  } catch(err) {
-    errEl.textContent = 'Erru koneksaun. Tenta fali.';
-    errEl.hidden = false;
-  } finally {
-    submitBtn.disabled = false;
-    submitLabel.textContent = 'Kria Agora';
-    submitSpinner.hidden = true;
-  }
+
 });
 
-// ── Update table row after successful create ──
+
+// ── Submit Create User ──
+document.getElementById('mu-create-form')
+.addEventListener('submit', async function(e) {
+
+    e.preventDefault();
+
+    const username = document.getElementById('mu-username')
+        .value.trim();
+
+    const groupId = document.getElementById('mu-group')
+        .value;
+
+    const errEl = document.getElementById('mu-error');
+
+    const submitBtn = document.getElementById('mu-submit');
+
+    const submitLabel = document.getElementById('mu-submit-label');
+
+    const submitSpinner = document.getElementById('mu-submit-spinner');
+
+    errEl.hidden = true;
+
+    submitBtn.disabled = true;
+
+    submitLabel.textContent = 'Prosesu…';
+
+    submitSpinner.hidden = false;
+
+    try {
+
+        const csrf = document.querySelector(
+            '[name=csrfmiddlewaretoken]'
+        ).value;
+
+        const res = await fetch(
+            `/Utilizadores/membro/users/${currentMembroId}/api/create/`,
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrf
+                },
+
+                body: JSON.stringify({
+                    username,
+                    group_id: groupId
+                        ? parseInt(groupId)
+                        : null
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        if (data.ok) {
+
+            closeModal();
+
+            updateRowAfterCreate(
+                currentMembroId,
+                data.username
+            );
+
+        } else {
+
+            errEl.textContent = data.error;
+            errEl.hidden = false;
+
+        }
+
+    } catch(err) {
+
+        errEl.textContent =
+            'Erru koneksaun. Tenta fali.';
+
+        errEl.hidden = false;
+
+    } finally {
+
+        submitBtn.disabled = false;
+
+        submitLabel.textContent = 'Kria Agora';
+
+        submitSpinner.hidden = true;
+    }
+
+});
+
+
+// ── Update row after create ──
 function updateRowAfterCreate(membroId, username) {
-  // Find all buttons with onclick that contains the membroId
-  const btns = document.querySelectorAll(`button[onclick*="openCreateModal(${membroId},"]`);
-  btns.forEach(btn => {
-    const td     = btn.closest('td');
-    const row    = btn.closest('tr');
 
-    // Replace action button with detail link
-    td.innerHTML = `<a href="/Utilizadores/membro/users/${membroId}/detail/" class="mu-btn mu-btn--ghost">
-      <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5Z" stroke="currentColor" stroke-width="1.4"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.4"/></svg>
-      Detail
-    </a>`;
+    const btns = document.querySelectorAll(
+        `button[onclick*="openCreateModal(${membroId},"]`
+    );
 
-    // Update status cell (4th td)
-    const statusTd = row.querySelectorAll('td')[3];
-    statusTd.innerHTML = `<span class="mu-status mu-status--active"><span class="mu-dot"></span>Ativu</span>`;
+    btns.forEach(btn => {
 
-    // Brief highlight
-    row.style.background = '#f0fdf4';
-    setTimeout(() => { row.style.background = ''; row.style.transition = 'background 1.2s'; }, 1200);
-  });
+        const td  = btn.closest('td');
+
+        const row = btn.closest('tr');
+
+        // replace action button
+        td.innerHTML = `
+        <a href="/Utilizadores/membro/users/${membroId}/detail/"
+           class="mu-btn mu-btn--ghost">
+
+          <svg width="13"
+               height="13"
+               viewBox="0 0 15 15"
+               fill="none">
+
+            <path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5Z"
+                  stroke="currentColor"
+                  stroke-width="1.4"/>
+
+            <circle cx="7.5"
+                    cy="7.5"
+                    r="2"
+                    stroke="currentColor"
+                    stroke-width="1.4"/>
+          </svg>
+
+          Detail
+        </a>
+        `;
+
+        // update status
+        const statusTd = row.querySelectorAll('td')[3];
+
+        statusTd.innerHTML = `
+        <span class="mu-status mu-status--active">
+            <span class="mu-dot"></span>
+            Ativu
+        </span>
+        `;
+
+        // highlight
+        row.style.background = '#f0fdf4';
+
+        setTimeout(() => {
+
+            row.style.background = '';
+
+            row.style.transition = 'background 1.2s';
+
+        }, 1200);
+
+    });
+
 }
 
-// ── Live search ──
-document.getElementById('mu-search').addEventListener('input', function() {
-  const q = this.value.toLowerCase();
-  document.querySelectorAll('#mu-table .mu-row').forEach(row => {
-    row.style.display = row.dataset.name.includes(q) ? '' : 'none';
-  });
-});
 </script>
+
+<style>
+
+/* DATATABLE CUSTOM */
+.dataTables_wrapper{
+    width:100%;
+    overflow-x:auto;
+}
+
+table.dataTable{
+    width:100% !important;
+}
+
+.dataTables_length,
+.dataTables_filter{
+    margin-bottom:15px;
+}
+
+.dataTables_filter input,
+.dataTables_length select{
+
+    border:1px solid #ddd !important;
+
+    border-radius:8px !important;
+
+    padding:6px 10px !important;
+
+    outline:none !important;
+
+    background:#fff !important;
+}
+
+.dataTables_paginate .paginate_button{
+
+    border-radius:6px !important;
+
+    margin:2px !important;
+}
+
+table.dataTable.no-footer{
+    border-bottom:none !important;
+}
+
+
+/* MOBILE */
+@media(max-width:768px){
+
+    .dataTables_wrapper .dataTables_filter{
+        width:100%;
+        text-align:left !important;
+        margin-bottom:10px;
+    }
+
+    .dataTables_wrapper .dataTables_filter input{
+        width:100%;
+        margin-left:0 !important;
+    }
+
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate{
+
+        width:100%;
+
+        text-align:center !important;
+
+        margin-top:10px;
+    }
+
+    .mu-table{
+        min-width:750px;
+    }
+
+}
+
+</style>
 
 {% endblock %}
